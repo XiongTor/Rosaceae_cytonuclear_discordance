@@ -43,6 +43,53 @@ for file in ../03-genetrees/*.ufboot; do
   shuf -n 100 "$file" > ./bootstrap_100/${tt}_100.ufboot
 done
 
+# 对每个获取的bootstrap树取一个类群
+for name in ./*_rt.tre; do
+  tt=$(basename $name .tre)
+  mkdir -p ./tmp_${tt}
+  
+  # 用awk按行拆分，每行一棵树存为单独文件
+  awk '{print > "./tmp_'${tt}'/tree_" NR ".nwk"}' $name
+  
+  > ./${tt}_oneoutgroup.tre
+  
+  for single_tree in ./tmp_${tt}/tree_*.nwk; do
+    
+    z=$(nw_labels -I $single_tree | grep -c "Zelkova_schneideriana")
+    e=$(nw_labels -I $single_tree | grep -c "Elaeagnus_angustifolia")
+    m=$(nw_labels -I $single_tree | grep -c "Morus_indica")
+    
+    tmp_out=$(mktemp)
+    
+    echo "  树 $single_tree: z=$z e=$e m=$m"
+    
+    if [[ $z -eq 1 ]]; then
+      rm_taxa=$(nw_labels -I "$single_tree" | grep -E "Elaeagnus_angustifolia|Morus_indica" | paste -sd "," -)
+      echo "  z分支 rm_taxa=$rm_taxa"
+      if [[ -z "$rm_taxa" ]]; then
+        pxrlt -t $single_tree -c ../old_z.txt -n ../new.txt >> ./${tt}_oneoutgroup.tre
+      else
+        pxrmt -t $single_tree -n $rm_taxa > $tmp_out
+        pxrlt -t $tmp_out -c ../old_z.txt -n ../new.txt >> ./${tt}_oneoutgroup.tre
+      fi
+      
+    elif [[ $e -eq 1 ]]; then
+      echo "  e分支"
+      pxrmt -t $single_tree -n Morus_indica > $tmp_out
+      pxrlt -t $tmp_out -c ../old_e.txt -n ../new.txt >> ./${tt}_oneoutgroup.tre
+      
+    else
+      echo "  m分支"
+      pxrlt -t $single_tree -c ../old_m.txt -n ../new.txt >> ./${tt}_oneoutgroup.tre
+    fi
+    
+    rm -f $tmp_out
+  done
+  
+  echo "完成 $name"
+  rm -rf ./tmp_${tt}
+done
+
 #对每个基因的100个bootstrap树集合进行置根
 for tree in ./*.ufboot; do
     tt=$(nw_labels -I $tree|sort|uniq|grep -E "Elaeagnus_angustifolia|Zelkova_schneideriana|Morus_indica"|paste -sd,)
@@ -134,6 +181,7 @@ cat BP_sim.rt.genetrees.txt |parallel -j 30 'python ../script/triple_frequency_c
 # !!! The GitHub orgin script is wrong, the input file should be the genetrees,not the species tree. You can check the `find_unbalanced_triplets.py`
 python /data/xiongtao/tree/ILS/gene_flow/gene_flow_analy/script/find_unbalanced_triplets.py $geneTr
 
+mv unbalanced.trp.tsv
 #result in unbalanced.trp.tsv
 python /data/xiongtao/tree/ILS/gene_flow/gene_flow_analy/script/triplet_mapper.py $speciesTr unbalanced.trp.tsv
 #result in unbalanced_triples_raw_count.tre and unbalanced_triples_perc_reticulation_index.tre
@@ -143,8 +191,8 @@ python /data/xiongtao/tree/ILS/gene_flow/gene_flow_analy/script/triplet_mapper.p
 
 ############################### 3. calculate the relative contributions of ILS, GTEE, and IH ######
 ###  claculate the gene tree variation
-iqtree -t rosa_orthofinder_treeshrink_sp_rt_nosupp_nozero_oneoutg_final.tre --gcf BSgenetree.trees --prefix concord
-#BSgenetree.trees is the bootstrap gene trees
+iqtree -t rosa_orthofinder_MO_treeshrink_sp_rt_oneoutg_nonodelabel_nozero_final.tre --gcf BSgenetree.trees --prefix concord
+#BSgenetree.trees is the bootstrap gene trees.exampled, if you have 20 genes, you will have 20 x 100 bootstrap gene trees assuming you conducted 100 replicates.
 #Final result:
 concord.cf.stat
 
@@ -152,13 +200,13 @@ concord.cf.stat
 ###   GTEE 
 # use the simulated gene trees to estimate the GTEE error
 #The input sp tree should be the species tree without support values
-seq-gen -mGTR -l500 -n317 -a 0.5 -g 4 -z $RANDOM < rosa_orthofinder_treeshrink_sp_rt_nosupp_nozero_oneoutg_final.tre > simulate_tree.fa  
+seq-gen -mGTR -l1000 -n2063 -a 0.5 -g 4 -z $RANDOM < rosa_orthofinder_MO_treeshrink_sp_rt_oneoutg_nonodelabel_nozero_final.tre > simulate_tree.fa  
 
 # separate the simulate seqs into 20 files,becaues we have 20 tips
 # you can use the mean /median length of your real seqs to set the length of simulate seqs
 awk '/^>/{c++} {print > "simulate_" int((c-1)/80)+1 ".fasta"}' simulate_tree.fa
 
-ls *.fasta | parallel -j 3 "iqtree3 -s {} -m MFP -B 1000 --bnni -T 15"
+ls *.fasta | parallel -j 6 "iqtree3 -s {} -m MFP -B 1000 --bnni -T 10"
 
 for name in seq/*.fasta;do
   iqtree -s $name -m MFP -B 1000 --bnni -T 50
@@ -166,6 +214,12 @@ done
 
 cat seq/*.treefile > sim_gene.trees
 raxmlHPC -f b -t species.tre -z sim_gene.trees -m GTRGAMMA -n ERR
+# 当模拟的基因树并不包含有全部的物种时，需要用到ASTRAL来打分，无法使用raxmlHPC了
+# -t 2 输出每个分支的 quartet support
+astral4 -C -c rosa_orthofinder_sptree_rebranch_rt_oneoutgroup.tre \
+  -u 2 \
+  -o GTEE_scored.tre \
+  sim_genetrees.tre
 
 #file result: RAxML_bipartitions.ERR
 Rscript ~/data/scripts/ILS_GTEE_IH/get_node_inf.R RAxML_bipartitions.ERR
@@ -188,3 +242,4 @@ Rscript ~/data/scripts/ILS_GTEE_IH/get_node_inf.R unbalanced_triples_perc_reticu
 # 4			849				4		62		100
 
 Rscript /data/xiongtao/scripts/ILS_GTEE_IH/relaimpo.R ILS_GTEE_IH.csv
+
