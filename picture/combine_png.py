@@ -11,13 +11,13 @@ import os, glob
 # ================= 配置区 (Configuration Section) =================
 
 pdf_dir = "./"                  # PDF 所在目录 (PDF directory)
-out_png = "all_filter_snp.png"  # 输出文件名 (Output filename)
+out_pdf = "all_pdfs.pdf"  # 输出文件名 (Output filename)
 
 poppler_path = r"D:\python\poppler-25.12.0\Library\bin"
 
 TARGET_WIDTH = 5000             # 每个子图宽度（像素） (Width of each sub-image in pixels)
 COLS = 2
-ROWS = 1
+ROWS = 7
 GAP = 1                       # 子图间距（像素） (Gap between sub-images in pixels)
 BG_COLOR = (255, 255, 255)
 
@@ -72,6 +72,7 @@ for idx, img in enumerate(images):
     canvas.paste(img, (x, y))
 
 # 6️⃣ 保存 (Save)
-canvas.save(out_png, dpi=(300, 300))
+# canvas.save(out_png, dpi=(300, 300))
+canvas.save(out_pdf, "PDF", resolution=300)
 
-print(f"Saved: {out_png}")
+print(f"Saved: {out_pdf}")

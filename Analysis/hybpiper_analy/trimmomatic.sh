@@ -23,15 +23,15 @@ done
 
 
 
-#!/bin/bash
-input_dir=/home/xiongtao/data/project/Rosaceae/seqdata/final_fastq/single
-output_dir=/home/xiongtao/data/project/Rosaceae/seqdata/final_fastq/trimmomatic
-#specify the parameter and pathway of the Trimmomatic
-trimmomatic_path=/home/xueqin/data/software/Trimmomatic-0.38/trimmomatic-0.38.jar
-trimmomatic_params="ILLUMINACLIP:/home/xueqin/data/software/Trimmomatic-0.38/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36"
-for sample in ${input_dir}/*.fastq; do
-  sample_name=$(basename ${sample} .fastq)
-  reads=${sample}
-  output_prefix=${output_dir}/${sample_name}
-  java -jar ${trimmomatic_path} SE -threads 15 -phred33 ${reads} ${output_prefix}.fq.gz ${trimmomatic_params}
-done
+# #!/bin/bash
+# input_dir=/home/xiongtao/data/project/Rosaceae/seqdata/final_fastq/single
+# output_dir=/home/xiongtao/data/project/Rosaceae/seqdata/final_fastq/trimmomatic
+# #specify the parameter and pathway of the Trimmomatic
+# trimmomatic_path=/home/xueqin/data/software/Trimmomatic-0.38/trimmomatic-0.38.jar
+# trimmomatic_params="ILLUMINACLIP:/home/xueqin/data/software/Trimmomatic-0.38/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36"
+# for sample in ${input_dir}/*.fastq; do
+#   sample_name=$(basename ${sample} .fastq)
+#   reads=${sample}
+#   output_prefix=${output_dir}/${sample_name}
+#   java -jar ${trimmomatic_path} SE -threads 15 -phred33 ${reads} ${output_prefix}.fq.gz ${trimmomatic_params}
+# done

@@ -115,7 +115,7 @@ seq 1 100 | parallel -j10 '
   Rscript ../script/clean_supp.R rosa_orthofinder_bootstrap_{}_sp_rt.tre rosa_orthofinder_bootstrap_{}_sp_rt_nosupp.tre
 '
 # remain only one outgroup
-for name in ./*_rt.tre;do
+for name in ./*rt.tre;do
   tt=$(basename $name .tre);   
   z=$(nw_labels -I $name|grep -c "Zelkova_schneideriana");   
   e=$(nw_labels -I $name|grep -c "Elaeagnus_angustifolia");   
@@ -124,14 +124,14 @@ for name in ./*_rt.tre;do
     rm=$(nw_labels -I "$name" | grep -E "Elaeagnus_angustifolia|Morus_indica" | paste -sd "," -);     
     echo $name "z";     
     pxrmt -t $name -n $rm>./$tt;     
-    pxrlt -t ./$tt -c ../old_z.txt -n ../new.txt >./${tt}_oneoutgroup.tre;   
+    pxrlt -t ./$tt -c ../../old_z.txt -n ../../new.txt >./${tt}_oneoutgroup.tre;   
   elif [[ $e -eq 1 ]];then     
     pxrmt -t $name -n Morus_indica>./$tt;     
     echo $name "e";     
-    pxrlt -t ./$tt -c ../old_e.txt -n ../new.txt >./${tt}_oneoutgroup.tre;   
+    pxrlt -t ./$tt -c ../../old_e.txt -n ../../new.txt >./${tt}_oneoutgroup.tre;   
   else     
     echo $name "m";     
-    pxrlt -t $name -c ../old_m.txt -n ../new.txt >./${tt}_oneoutgroup.tre;   
+    pxrlt -t $name -c ../../old_m.txt -n ../../new.txt >./${tt}_oneoutgroup.tre;   
   fi; 
  done
 

@@ -22,8 +22,8 @@ def svg_to_png(input_svg, output_png, dpi=300, scale=1.0):
 # 示例用法
 if __name__ == "__main__":
     svg_to_png(
-        input_svg="input.svg",
-        output_png="output.png",
+        input_svg="fbranch_0.04_0.01.svg",
+        output_png="fbranch_0.04_0.01_output.png",
         dpi=300,    # 分辨率
         scale=2.0   # 放大2倍
     )
