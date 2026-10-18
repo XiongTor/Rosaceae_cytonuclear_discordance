@@ -7,8 +7,8 @@
 [![Julia: >=1.9](https://img.shields.io/badge/Julia-%3E%3D1.9-purple.svg)]()
 
 This repository contains the complete analytical pipelines, custom scripts, and figure-generation workflows for the study:  
-**"Phylogenomic Dissection of Cytonuclear Discordance and Reticulate Evolution in Rosaceae"**  
-*(《蔷薇科核质冲突及其成因探究》)*
+**"Decomposing Phylogenetic  Discordance in Rosaceae: The Roles of Incomplete Lineage Sorting, Introgression, and Gene-Tree Error"**  
+
 
 ---
 
@@ -17,15 +17,15 @@ This repository contains the complete analytical pipelines, custom scripts, and 
 Phylogenetic relationships among the major lineages of Rosaceae have long remained contentious, characterized by pronounced conflict between plastid and nuclear phylogenies, as well as extensive topological discordance among nuclear gene trees. Here, we comprehensively investigate the nature, magnitude, and underlying drivers of phylogenetic discordance across Rosaceae by sampling 79 genera—representing approximately 75% of the naturally occurring generic diversity across all three subfamilies (Rosoideae, Amygdaloideae, Dryadoideae) and all tribes—along with three outgroup taxa.
 
 We integrated three complementary genomic datasets:
-1. **Chloroplast Dataset**: Complete and partial plastid genomes assembled from 35 reference plastomes.
-2. **Angiosperms353 Dataset**: Target-enrichment single-copy nuclear orthologs (353 loci).
-3. **OrthoFinder Dataset**: Broad-scale transcriptome and whole-genome orthologous groups (2,987 single-copy orthologous genes derived from six reference genomes across diverse tribes).
+1. **Chloroplast Dataset**
+2. **Angiosperms353 Dataset**
+3. **OrthoFinder Dataset**
 
 ### Key Findings
 1. **Profound Cytonuclear Incongruence**: The chloroplast concatenated tree places Amygdaloideae as early-diverging/basal with maximum bootstrap support, whereas both concatenated and coalescent-based species trees derived from the two independent nuclear datasets unambiguously place Rosoideae as basal.
 2. **Discordance Epicenter Mapping**: Genome-wide DensiTree clouds, multidimensional scaling (MDS) of Robinson-Foulds and path distances, and internode conflict metrics (Quartet Sampling QC/QD/QI, Internode Certainty IC/ICA, and the four-dimensional concordance vector $\psi_1-\psi_4$) identify Amygdaloideae—and particularly the tribe **Maleae**—as the primary epicenter of topological incongruence.
 3. **Sequence Property Divergence**: Systematically quantifying 15 sequence and tree properties via AMAS and PhyKit, followed by principal component analysis (PCA) and property-matched subsampling experiments, demonstrates that intrinsic evolutionary heterogeneity (e.g., GC content, evolutionary rate, and proportion of variable sites) between nuclear and organellar genomes contributes significantly to cytonuclear divergence.
-4. **Dissecting Biological Drivers (ILS vs. IH)**: Multi-angle investigations—neutral multispecies coalescent (MSC) simulations, MSCquartets hypothesis testing under T1 and T3 models, QuIBL internal branch-length mixture modeling, genome-wide Dsuite ABBA-BABA $D$-statistics/$f_4$-ratio/$F_{\mathrm{branch}}$, and SNaQ semi-directed phylogenetic networks—reveal that **Incomplete Lineage Sorting (ILS)** is the pervasive family-wide biological driver of gene-tree discordance, whereas **introgressive hybridization (IH)** is largely localized and concentrated within Maleae.
+4. **Dissecting Biological Drivers (ILS vs. IH)**: Multi-angle investigations—neutral multispecies coalescent (MSC) simulations, MSCquartets hypothesis testing under T1 and T3 models, QuIBL internal branch-length mixture modeling, genome-wide Dsuite ABBA-BABA, and SNaQ semi-directed phylogenetic networks—reveal that **Incomplete Lineage Sorting (ILS)** is the pervasive family-wide biological driver of gene-tree discordance, whereas **introgressive hybridization (IH)** is largely localized and concentrated within Maleae.
 5. **Unified Hierarchical Importance Partitioning**: Regression of gene concordance factors (gCF) on estimated ILS ($\theta$), gene-tree estimation error (GTEE via Seq-Gen simulations), and introgression intensity (Reticulation Index, RI) shows that ILS and GTEE represent the dominant factors driving internode gene-tree conflict.
 6. **Functional Adaptations of Introgressed Loci**: Whole-genome sliding-window $|f_{dM}|$ scans, GMAP chromosomal mapping onto the *Malus domestica* reference, and clusterProfiler GO enrichment across high-confidence Maleae trios reveal that introgressed genes are significantly enriched in pathways related to environmental stress tolerance, metabolic homeostasis, and reproductive defense.
 
@@ -181,7 +181,7 @@ using Pkg
 Pkg.add(["PhyloNetworks", "PhyloPlots", "CSV", "DataFrames"])
 ```
 
-### 3.4 Standalone Bioinformatics Software
+### 3.4 Main Bioinformatics Software
 Ensure the following tools are compiled and available in system `$PATH`:
 - **IQ-TREE 3** (v3.0.0 or later; Minh et al. 2020)
 - **ASTRAL-Pro3 / ASTRAL-III** (Zhang et al. 2020)
@@ -195,124 +195,7 @@ Ensure the following tools are compiled and available in system `$PATH`:
 
 ---
 
-## 4. Analytical Workflow and Execution Guide
-
-### Step 1: Cytonuclear Discordance and Multimetric Node Quantification
-```bash
-# 1. DensiTree visual cloud overlay
-Rscript cytonuclear_display/densitree.R
-
-# 2. Multidimensional scaling (MDS) projection of topological space
-Rscript cytonuclear_display/RF_path_MDS_new.R
-
-# 3. Calculate gene and site concordance factors (gCF and sCF)
-bash concordance_node_label/concordance_factor_gcf_scf_qcf.sh
-
-# 4. Internode Certainty (IC / ICA) via RAxML
-bash concordance_node_label/ICA_IC_value.sh
-Rscript concordance_node_label/ICA_plot.R
-
-# 5. Quartet Sampling (QC, QD, QI) across species-tree nodes
-bash concordance_node_label/QS_test.sh
-Rscript cytonuclear_display/QS_visual.R
-
-# 6. Four-dimensional concordance vector calculation (ψ1-ψ4)
-bash concordance_node_label/phytop.sh
-```
-
-### Step 2: Sequence and Tree Property-Matching Analysis
-```bash
-# 1. High-throughput extraction of 15 sequence and tree properties
-bash factor_alignment_tree/factor_parallel.sh <alignment_dir> <genetree_dir>
-
-# 2. Execute correlation analysis, PCA, and property-matched sampling
-Rscript factor_alignment_tree/factor_plot/09-run_all.R
-```
-
-### Step 3: Distinguishing Incomplete Lineage Sorting and Introgression
-```bash
-# 1. Estimate mutation parameter θ and execute neutral coalescent simulations in Phybase
-Rscript simulate_theta/get_theta.R <coalescent_tree.tre> <mutation_tree.tre>
-Rscript simulate_theta/phybase_simulate.R
-Rscript simulate_theta/count_four_aray_lm.R
-
-# 2. MSCquartets hypothesis testing under T1 (species tree) and T3 (coalescent) models
-Rscript MSCquartets/MSCquartets.R
-Rscript MSCquartets/get_sp_ILS_IH_contribution.R
-Rscript MSCquartets/get_gene_ILS_IH_contribution.R <tree_dir> <output_dir>
-
-# 3. QuIBL branch-length mixture distribution modeling
-bash QuIBL/run_quibl.sh
-Rscript QuIBL/QuIBL_plot.R
-
-# 4. Whole-genome ABBA-BABA D-statistics and f4-ratio via Dsuite
-python D-statistics/msa2vcf_biallelic.py <alignment.fasta> <output.vcf> --min_cov 0.8
-bash D-statistics/D-statistics.sh
-Rscript D-statistics/plot_box.R
-
-# 5. Semi-directed phylogenetic network inference with SNaQ (h = 0 to 6)
-julia PhyloNetwork/runSNaQ_hn.jl
-Rscript PhyloNetwork/plot_final_loglikelihood.R
-```
-
-### Step 4: Unified Hierarchical Partitioning (GTEE vs. ILS vs. IH)
-```bash
-# 1. Simulate sequences with Seq-Gen along species-tree topology to quantify GTEE
-python ILS_GTEE_IH/new_use_in_GTEE_part/generate_seqgen_commands.py
-bash ILS_GTEE_IH/new_use_in_GTEE_part/seqgen_commands.sh
-
-# 2. Enumerate rooted triplets in empirical and coalescent-simulated gene trees
-bash ILS_GTEE_IH/new_use_in_globel/simulator_tripletCounter_tripletMapper.sh
-
-# 3. Execute relative importance (LMG) variance partitioning with LOESS 95% CI
-Rscript ILS_GTEE_IH/new_use_in_globel/relaimpo.R <input_metrics.csv>
-```
-
-### Step 5: Candidate Introgressed Gene Identification and Functional Enrichment
-```bash
-# 1. Dual-filtering of candidate trios based on top decile f4-ratio and QuIBL mixprop2
-Rscript Introgression_Functional_Enrichment/01_filter_high_confidence_trios_f4_quibl.R
-
-# 2. Build custom OrgDb from EggNOG annotations and execute clusterProfiler GO enrichment
-Rscript Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R
-
-# 3. Plot multi-threshold barplots (top 3% and top 5% |fdM|)
-Rscript Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R
-
-# 4. Calculate exact 6-trio non-overlapping Venn intersections
-Rscript Introgression_Functional_Enrichment/04_analyze_GO_venn_six_groups_exact_intersections.R
-
-# 5. Assemble publication figures combining scatter plots, trees, and GO functional profiles
-python Introgression_Functional_Enrichment/05_batch_assemble_trio_figures.py
-```
-
----
-
-## 5. Manuscript Figures and Tables to Code Mapping
-
-| Manuscript Item | Description / Content | Underlying Script(s) in this Repository |
-| :--- | :--- | :--- |
-| **Figure 1** | Cytonuclear discordance visual clouds and deep topological conflict | `cytonuclear_display/densitree.R`, `cytonuclear_display/RF_path_MDS_new.R` |
-| **Figure 2** | Species tree with node concordance (QC, QD, QI, IC, ICA, $\psi_1-\psi_4$) | `concordance_node_label/QS_visual.R`, `concordance_node_label/ICA_plot.R`, `concordance_node_label/phytop.sh` |
-| **Figure 3** | 15 sequence/tree properties, correlation heatmap, PCA, and property-matching experiment | `factor_alignment_tree/factor_plot/03_correlation_analysis.R`, `factor_plot/04_pca_analysis.R`, `factor_plot/06_chloroplast_matching.R` |
-| **Figure 4** | Neutral coalescent simulation fit ($R^2$), QuIBL introgression heatmaps, and Dsuite $D$ distributions | `simulate_theta/count_four_aray_lm.R`, `QuIBL/QuIBL_plot.R`, `D-statistics/plot_box.R` |
-| **Figs. S7–S11** | Robinson-Foulds and Path distance distributions across taxonomic levels | `cytonuclear_display/RF_path_MDS_new.R` |
-| **Figs. S17–S18** | Comprehensive internode concordance factors (QC, QD, QI, IC, ICA, gCF, sCF, $\psi$) | `concordance_node_label/concordance_factor_gcf_scf_qcf.sh`, `concordance_node_label/ICA_IC_value.sh`, `concordance_node_label/QS_test.sh`, `concordance_node_label/phytop.sh` |
-| **Figs. S21–S23** | Sequence property density curves, feature correlation matrices, and distance metrics | `factor_alignment_tree/factor_plot/02_density_plots.R`, `factor_plot/07_final_comparison.R` |
-| **Figs. S24–S30** | Coalescent simulation $R^2$ regression plots across $\theta$ gradients (family, subfamilies) | `simulate_theta/count_four_aray_lm.R`, `simulate_theta/plot.R` |
-| **Figs. S31–S38** | MSCquartets hypothesis test ratios across $\alpha$ and $\beta$ thresholds, and locus-level scores | `MSCquartets/MSCquartets.R`, `MSCquartets/get_sp_ILS_IH_contribution.R`, `Get_ILS_IH_gene/get_and_plot_IH_gene.R` |
-| **Figs. S41–S45** | QuIBL introgression proportion heatmaps for AGS353 and OrthoFinder | `QuIBL/QuIBL_plot.R` |
-| **Figs. S46–S48** | Dsuite ABBA-BABA $D$-statistic and $f_4$-ratio distributions and spatial patterns | `D-statistics/plot_box.R`, `D-statistics/D-statistics.sh` |
-| **Figs. S49–S52** | SNaQ semi-directed phylogenetic networks ($h = 0$ to $6$) and pseudolikelihood slopes | `PhyloNetwork/runSNaQ_hn.jl`, `PhyloNetwork/plot_final_loglikelihood.R` |
-| **Figs. S53–S58** | Relative importance hierarchical variance decomposition (GTEE vs. ILS vs. IH) with LOESS | `ILS_GTEE_IH/new_use_in_globel/relaimpo.R` |
-| **Figs. S59–S64** | Multi-panel introgression scans ($|f_{dM}|$) and GO functional enrichment for 6 trios | `Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R`, `05_batch_assemble_trio_figures.py` |
-| **Figs. S69–S70** | Nuclear gene-tree DensiTree clouds and multidimensional scaling (MDS) | `cytonuclear_display/densitree.R`, `cytonuclear_display/RF_path_MDS_new.R` |
-| **Tables S7–S8** | QuIBL discordant quartet distribution and mixture model fit statistics | `QuIBL/QuIBL_plot.R` |
-| **Table S25** | High-confidence introgressed gene candidates, functional annotations, and $P$-values | `Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R` |
-
----
-
-## 6. Citation and Contact
+## 4. Citation and Contact
 
 If you find this codebase, analytical workflows, or custom scripts useful in your research, please cite our paper:
 
