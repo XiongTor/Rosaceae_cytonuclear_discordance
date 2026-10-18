@@ -1,312 +1,317 @@
-# 蔷薇科系统发育相关研究
-# Rosaceae Phylogenomics Analysis Pipeline
+# Phylogenomic Dissection of Cytonuclear Discordance and Reticulate Evolution in Rosaceae
 
-本项目主要包含研究中所涉及的代码脚本，涵盖数据获取、数据过滤、系统发育分析、多样化分析、祖先重建及网状进化与ILS水平估计等分析流程。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Phylogenomics](https://img.shields.io/badge/Pipeline-Phylogenomics-blue.svg)]()
+[![R-packages](https://img.shields.io/badge/R-%3E%3D4.2.0-green.svg)]()
+[![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue.svg)]()
 
-This repository contains comprehensive scripts for phylogenomic analysis of the Rosaceae family, including data acquisition, phylogenetic tree construction, incongruence analysis (ILS, GTEE, IH), introgression detection, and distribution data analysis.
-
-**作者 (Author)**: Tao Xiong
-
----
-
-## 研究流程图 (Research Workflow) - 2025.02
-
-![蔷薇科果实系统发育研究](https://github.com/XiongTor/Rosa_family/blob/main/imag/readme_flowwork/%E8%94%B7%E8%96%87%E7%A7%91%E6%9E%9C%E5%AE%9E%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E5%8F%91%E8%82%B2%E7%A0%94%E7%A9%B6.svg)
-
-![蔷薇科多倍化及网状进化研究](https://github.com/XiongTor/Rosa_family/blob/main/imag/readme_flowwork/%E8%94%B7%E8%96%87%E7%A7%91%E7%BD%91%E7%8A%B6%E8%BF%9B%E5%8C%96%E5%8F%8A%E4%B8%8D%E5%AE%8C%E5%85%A8%E8%B0%B1%E7%B3%BB%E7%AD%9B%E9%80%89%E7%A0%94%E7%A9%B6.svg)
-
-![蔷薇科核型演化研究](https://github.com/XiongTor/Rosa_family/blob/main/imag/readme_flowwork/%E8%94%B7%E8%96%87%E7%A7%91%E6%A0%B8%E5%9E%8B%E6%BC%94%E5%8C%96.svg)
+This repository contains the complete analytical pipelines, custom scripts, and figure-generation code for the study:  
+**"Phylogenomic Dissection of Cytonuclear Discordance, Incomplete Lineage Sorting, and Reticulate Evolution in Rosaceae"**  
+*(《蔷薇科核质冲突及其成因探究》)*
 
 ---
 
-## 目录 (Table of Contents)
+## 📖 Overview & Scientific Scope
 
-- [数据下载 (Data Download)](#数据下载-data-download)
-  - [性状数据 (Character Data)](#性状数据-character-data)
-  - [分布数据 (Distribution Data)](#分布数据-distribution-data)
-- [分析 (Analysis)](#分析-analysis)
-  - [建树分析 (Tree Building)](#建树分析-tree-building)
-  - [Hybpiper分析 (Hybpiper Analysis)](#hybpiper分析-hybpiper-analysis)
-  - [ILS分析 (ILS Analysis)](#ils分析-ils-analysis)
-  - [BAMM分析 (BAMM Analysis)](#bamm分析-bamm-analysis)
-- [工具 (Tools)](#工具-tools)
-- [统计分析与绘图 (Statistical Analysis)](#统计分析与绘图-statistical-analysis)
-- [其他 (Others)](#其他-others)
+Phylogenomic relationships among the three major subfamilies of Rosaceae (Rosoideae, Amygdaloideae, Dryadoideae) have long been controversial. By integrating **three independent genomic datasets**—complete/partial chloroplast genomes, target-enrichment nuclear genes (**Angiosperms353**), and transcriptome/whole-genome orthologs (**OrthoFinder**)—this study systematically dissects the macroevolutionary patterns and underlying drivers of phylogenetic discordance across Rosaceae:
+
+1. **Deep Cytonuclear Discordance**: Nuclear data strongly support Rosoideae as basal, whereas plastid genomes place Amygdaloideae as basal.
+2. **Topological & Node-level Quantification**: DensiTree clouds, multidimensional scaling (MDS), Robinson–Foulds distances, and node metrics (Quartet Sampling QC/QD/QI, Internode Certainty IC/ICA, and concordance vectors $\psi_1-\psi_4$) identify Amygdaloideae, particularly the tribe **Maleae**, as the conflict epicenter.
+3. **Sequence Property Basis**: Systematic comparison of 15 sequence/tree properties and property-matching experiments demonstrate that evolutionary dynamics differences between organellar and nuclear genomes contribute substantially to cytonuclear divergence.
+4. **Biological Drivers (ILS vs. IH)**: Multi-angle approaches—coalescent simulations under the multispecies coalescent (MSC), MSCquartets hypothesis testing, QuIBL internal branch-length modeling, Dsuite ABBA–BABA $D$-statistics/$f_4$-ratio, and SNaQ phylogenetic networks—demonstrate that **ILS** is the primary biological driver, accompanied by **episodic, localized introgression** predominantly within Maleae.
+5. **Unified Relative Importance Framework**: Partitioning GTEE (gene-tree estimation error), ILS, and IH via hierarchical variance decomposition (`relaimpo`).
+6. **Functional Heterogeneity of Introgressed Genes**: Sliding-window $|f_{dM}|$ scans, EggNOG annotation, and clusterProfiler functional enrichment across six high-confidence trios reveal polygenic adaptations to stress responses and metabolic homeostasis.
 
 ---
 
-## 数据下载 (Data Download)
+## 🗂 Repository Structure
 
-### 性状数据 (Character Data)
-用于从各种数据库下载和处理性状数据的脚本。
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) |
-|--------|-------------|--------|
-| [get_dispersal_type.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/character_data_down/get_dispersal_type.R) | 基于扩散术语对每个物种的扩散类型进行分类，并探索扩散类型与分布范围之间的关系 <br> Classify dispersal type and explore relationship with distribution range | Tao Xiong |
-| [get_character_data.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/character_data_down/get_character_data.R) | 从TRY、BIEN、GIFT数据库下载性状数据并合并 <br> Download character data from TRY, BIEN, GIFT databases | Tao Xiong |
-
-### 分布数据 (Distribution Data)
-用于下载、清理和可视化物种分布数据的脚本。
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [get_distribution_data.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/get_distribution_data.R) | 从GBIF、idigbio、CVH、NSII数据库获取蔷薇科分布数据 <br> Get distribution data from GBIF, idigbio, CVH, NSII | Tao Xiong | 2025.03.14 |
-| [get_wcvp_native_distribution.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/get_wcvp_native_distribution.R) | 合并数据集，标准化物种名称，通过WCVP获取原生分布 <br> Combine datasets, standardize names, get native distribution via WCVP | Tao Xiong | 2025.03.14 |
-| [clean_distribution_data.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/clean_distribution_data.R) ⚙️ | 清理分布数据（需要Species、Longitude、Latitude列）<br> Clean distribution data (requires Species, Longitude, Latitude columns) | Tao Xiong | 2025-02-26 |
-| [map_rosa_subf.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/map_rosa_subf.R) | 将蔷薇亚科坐标信息映射到世界地图 <br> Map Rosa subfamily coordinates to world map | Tao Xiong | 2025.03.15 |
-| [count_continent_num_by_coordinate.R](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/count_continent_num_by_coordinate.R) | 计算各大陆原生和引入物种的数量 <br> Calculate native and introduced species per continent | Tao Xiong | 2025.03.15 |
-| [change_longtitude_to_address_baidu.py](https://github.com/XiongTor/Rosa_family/blob/main/DATA_DOWNLOAD/distribution_data_down/change_longtitude_to_address_baidu.py) | 使用百度API将经纬度转换为地址 <br> Reverse geocoding using Baidu API | Tao Xiong | 2025.03.14 |
-
-> ⚙️ 标记表示该脚本可直接在命令行运行 (Executable scripts)
-
----
-
-## 分析 (Analysis)
-
-### 建树分析 (Tree Building)
-使用多种方法（RAxML、ASTRAL、IQ-TREE等）进行系统发育树构建的脚本。
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [Pyphlawd_analysis.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/Pyphlawd_analysis.sh) | 设置PyPHLAWD数据库并为蔷薇科系统发育分析寻找优质聚类 <br> Setup PyPHLAWD database for Rosaceae phylogenetic analysis | Tao Xiong | 2025.03.27 |
-| [make_tree.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/make_tree.sh) | 多种建树方法记录（modeltest、RAxML-ng等）<br> Various tree building methods (modeltest, RAxML-ng) | - | - |
-| [genetree_reroot.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/genetree_reroot.sh) | 使用外类群或MAD方法重定根基因树 <br> Reroot gene trees using outgroup or MAD method | Tao Xiong | 2025-08-27 |
-| [pyphlawd_semi_auto.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/pyphlawd_semi_auto.sh) | 使用PyPHLAWD进行半自动系统发育树构建 <br> Semi-automatic phylogenetic tree building using PyPHLAWD | Tao Xiong | 2025-12-16 |
-| [hybsuite_use.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/hybsuite_use.sh) | 使用hybsuite（目标捕获流程）构建系统发育树 <br> Build tree using hybsuite (target capture pipeline) | Tao Xiong | 2025-08-27 |
-| [treeshrink_pipeline.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/treeshrink_pipeline.sh) | 过滤长度小于100bp的基因序列并进行treeshrink分析 <br> Filter sequences <100bp and run treeshrink analysis | Tao Xiong | 2026-01-11 |
-| [plot_tree.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/plot_tree.R) | 蔷薇科细胞核项目的自动化树绘图 <br> Auto plot trees for Rosaceae cytonuclear project | Tao Xiong | 2026-02-09 |
-| [rosa_make_tree_old_2022.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/bulidtree/rosa_make_tree_old_2022.sh) | 2022年的旧建树流程（存档）<br> Old tree-building pipeline from 2022 (archive) | xiongtao | 2023.05.16 |
-
-### Hybpiper分析 (Hybpiper Analysis)
-用于目标捕获数据组装和树构建的脚本。
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [trimmomatic.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/hybpiper_analy/trimmomatic.sh) | 使用Trimmomatic对Illumina测序数据进行质量修剪 <br> Quality trimming using Trimmomatic | Tao Xiong | 2025-03.26 |
-| [hybpiper_step.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/hybpiper_analy/hybpiper_step.sh) | 目标捕获数据的逐步hybpiper组装流程 <br> Step-by-step hybpiper assembly process | Tao Xiong | 2025-03.26 |
-| [make_tree_step.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/hybpiper_analy/make_tree_step.sh) | 记录hybpiper分析建树步骤（MAFFT比对、trimAL修剪）<br> Record tree building steps (MAFFT, trimAL) | Tao Xiong | 2025-04.04 |
-| [hybpiper_paftol_combine.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/hybpiper_analy/hybpiper_paftol_combine.sh) | 合并hybpiper和PAFTOL 353基因数据集 <br> Combine hybpiper and PAFTOL 353-gene datasets | - | - |
-
-### ILS分析 (ILS Analysis)
-用于分析不完全谱系分选（ILS）、基因树估计误差（GTEE）和渐渗杂交（IH）的综合脚本。
-
-#### 主要ILS脚本 (Main ILS Scripts)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [QS_test.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/QS_test.sh) | ILS分析的四重奏采样（QS）测试 <br> Quartet Sampling (QS) test for ILS analysis | Tao Xiong | 2025-09-26 |
-| [phytop.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/phytop.sh) | 运行ASTRAL和phytop进行物种树可视化 <br> Run ASTRAL and phytop for species tree visualization | Tao Xiong | 2025-10-17 |
-| [count_sp_rich_value.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/count_sp_rich_value.sh) | 过滤后计算每个基因的物种丰富度值 <br> Count species richness per gene after filtering | Tao Xiong | 2026-02-09 |
-| [phybase_simulate.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/phybase_simulate.R) | 使用phybase模拟不同的进化场景 <br> Simulate evolutionary scenarios using phybase | Tao Xiong | 2025-10-24 |
-
-#### 细胞核显示 (Cytonuclear Display)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [QS_visual.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/cytonuclear_display/QS_visual.R) | 可视化四重奏采样（QS）结果 <br> Visualize Quartet Sampling results | Xiongtao | - |
-| [RF_path_MDS.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/cytonuclear_display/RF_path_MDS.R) | Robinson-Foulds距离的MDS分析 <br> MDS analysis of Robinson-Foulds distances | Tao Xiong | 2025-10-18 |
-| [densitree.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/cytonuclear_display/densitree.R) | 绘制densitree以显示基因树之间的差异 <br> Plot densitree to show gene tree distinction | Tao Xiong | 2025-07-22 |
-| [phyparts.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/cytonuclear_display/phyparts.sh) | 运行phyparts分析并生成饼图可视化 <br> Run phyparts and generate pie chart visualization | - | - |
-| [phyparts_pies.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/cytonuclear_display/phyparts_pies.sh) | 将phyparts分析结果显示为饼图 <br> Display phyparts results as pie charts | - | - |
-
-#### D统计分析 (D-statistics Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [D-statistics.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/D-statistics.sh) | 计算D统计量以检查基因渐渗 <br> Calculate D-statistics to check gene introgression | Tao Xiong | 2025-05-16 |
-| [run_Dsuite.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/run_Dsuite.py) | Dsuite Dtrios自动化流程（枚举群体、提取序列、运行分析）<br> Auto pipeline for Dsuite Dtrios | Tao Xiong | 2025-10-14 |
-| [run_Dsuite_xt.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/run_Dsuite_xt.py) | 四群体测试的Dsuite Dfoil流程 <br> Dsuite Dfoil pipeline for 4-population test | Tao Xiong | 2025-10-14 |
-| [run_Dsutie_xt_snp_thinning.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/run_Dsutie_xt_snp_thinning.py) | 带SNP稀疏化的Dsuite流程 <br> Dsuite pipeline with SNP thinning | Tao Xiong | 2025-10-14 |
-| [run_Dsuite_no_snp_thinning.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/run_Dsuite_no_snp_thinning.py) | 不带SNP稀疏化的Dsuite流程 <br> Dsuite pipeline without SNP thinning | Tao Xiong | 2025-10-14 |
-| [msa2vcf_biallelic.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/msa2vcf_biallelic.py) | 从MSA fasta提取双等位基因SNP并输出VCF <br> Extract biallelic SNPs from MSA and output VCF | Tao Xiong | 2026-01-16 |
-| [run.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/run.sh) | 使用nohup并行运行所有生成的Dsuite脚本 <br> Run all Dsuite scripts in parallel with nohup | Tao Xiong | 2026-01-16 |
-| [make_runbash.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/make_runbash.sh) | 为每个参数组合生成单独的bash脚本 <br> Generate individual bash scripts for each parameter combination | Tao Xiong | 2026-01-16 |
-| [plot_box.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/D-statistics/plot_box.R) | 亚科间和亚科内D/f4值的比较 <br> Comparison of D/f4 values between/within subfamilies | Tao Xiong | 2025-10-16 |
-
-#### ILS/GTEE/IH分析 (ILS/GTEE/IH Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [get_node_inf.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/ILS_GTEE_IH/get_node_inf.R) | 从树中获取节点信息 <br> Get node information from trees | Tao Xiong | 2025-07-04 |
-| [get_theta_value.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/ILS_GTEE_IH/get_theta_value.R) | 从ASTRAL树和重新缩放的分支长度树获取theta值 <br> Get theta values from ASTRAL and rescaled trees | Tao Xiong | 2025-07-04 |
-| [relaimpo.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/ILS_GTEE_IH/relaimpo.R) | 计算ILS、GTEE和IH因子的相对重要性 <br> Calculate relative importance of ILS, GTEE, IH | Tao Xiong | 2025-07-04 |
-
-#### MSCquartets分析 (MSCquartets Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [MSCquartets.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/MSCquartets.R) | 记录MSCquartets分析工作流程 <br> Record MSCquartets analysis workflow | Tao Xiong | 2025.05.04 |
-| [get_gene_ILS_IH_contribution.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/get_gene_ILS_IH_contribution.R) | 评估ILS和IH对基因树不一致性的贡献 <br> Evaluate ILS and IH contributions to gene tree incongruence | Tao Xiong | 2026.01.28 |
-| [get_gene_ILS_IH_contribution_old.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/get_gene_ILS_IH_contribution_old.R) | 评估ILS和IH的贡献（旧版本）<br> Evaluate ILS and IH contributions (older version) | Tao Xiong | 2025.11.14 |
-| [get_sp_ILS_IH_contribution.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/get_sp_ILS_IH_contribution.R) | 获取物种水平的ILS和IH贡献 <br> Get species-level ILS and IH contributions | - | - |
-| [results_classify.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/results_classify.sh) | 对MSCquartets分析结果进行分类 <br> Classify results from MSCquartets analysis | Tao Xiong | 2026-01-29 |
-| [analy_df_num.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/MSCquartets/analy_df_num.R) | 分析results_classify.sh的结果（冲突分析和可视化）<br> Analyze results from results_classify.sh | Tao Xiong | 2026-02-06 |
-
-#### 系统发育网络分析 (PhyloNetwork Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [PhyloNetworks.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/PhyloNetwork/PhyloNetworks.R) | 运行PhyloNetworks（SnaQ）分析进行系统发育网络推断 <br> Run PhyloNetworks (SnaQ) for network inference | Tao Xiong | 2025-05-15 |
-| [plot_result_julia.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/PhyloNetwork/plot_result_julia.R) | 显示PhyloNetworks分析结果（基于Julia的可视化）<br> Display PhyloNetworks results (Julia-based) | Tao Xiong | 2026-02-12 |
-
-#### QuIBL分析 (QuIBL Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [run_quibl.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/QuIBL/run_quibl.sh) | 运行QuIBL分析 <br> Run QuIBL analysis | Tao Xiong | 2026-01-16 |
-| [QuIBL_plot.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/QuIBL/QuIBL_plot.R) | 绘制QuIBL分析结果 <br> Plot QuIBL analysis results | Tao Xiong | 2026-02-08 |
-
-#### 模拟研究 (Simulation Studies)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [phybase_simulate.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/simulate/phybase_simulate.R) | 使用phybase模拟不同的进化场景 <br> Simulate evolutionary scenarios using phybase | Tao Xiong | 2025-10-24 |
-| [get_theta.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/simulate/get_theta.R) | 通过MRCA匹配边来计算theta，然后注释树 <br> Compute theta by matching edges via MRCA | Tao Xiong | 2025-10-30 |
-| [count_four_aray.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/simulate/count_four_aray.R) | 从基因树中计算四重奏频率 <br> Count quartet frequencies from gene trees | Tao Xiong | 2025.05.04 |
-| [count_four_aray_lm.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/simulate/count_four_aray_lm.R) | 从基因树中计算四重奏频率（线性模型版本）<br> Count quartet frequencies (linear model version) | Tao Xiong | 2025.11.18 |
-
-#### 因子比对树分析 (Factor Alignment Tree Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [factor.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/factor_alignment_tree/factor.sh) | 使用phykit和AMAS获取比对和树的统计信息 <br> Use phykit and AMAS to get alignment/tree statistics | Tao Xiong | 2025-12-07 |
-| [factor_parallel.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/factor_alignment_tree/factor_parallel.sh) | 因子比对树分析的并行处理 <br> Parallel processing for factor alignment tree analysis | Tao Xiong | - |
-| [make_tree_factor.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/factor_alignment_tree/make_tree_factor.sh) | 为因子比对的20次迭代构建树 <br> Build trees for 20 iterations of factor alignment | Tao Xiong | 2025-12-16 |
-| [factor_plot.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/factor_alignment_tree/factor_plot.R) | 分析蔷薇科叶绿体和核基因组之间的不同因子 <br> Analyze factors between Chloroplast and Nuclear genomes | XiongTao | 2025.12.11 |
-
-#### 树外类群添加 (Tree Outgroup Addition)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [add_outgroup_gene_specific_change.py](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/tree_addoutg/add_outgroup_gene_specific_change.py) | 根据最近的内群亲缘关系添加具有基因特异性分支长度的外类群 <br> Add outgroup with gene-specific branch lengths | Tao Xiong | 2026-01-16 |
-| [keep_one_outg.sh](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/tree_addoutg/keep_one_outg.sh) | 在基因树中仅保留一个外类群 <br> Keep only one outgroup in gene trees | Tao Xiong | 2026-01-16 |
-
-#### IH基因获取 (Get ILS IH Gene)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [get_and_plot_IH_gene.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/ILS/Get_ILS_IH_gene/get_and_plot_IH_gene.R) | 读取IH/ILS基因结果并绘制箱线图和条形图 <br> Read IH/ILS gene results and plot boxplots/barplots | Tao Xiong | 2025-11-19 |
-
-### BAMM分析 (BAMM Analysis)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [plot_bamm_env.R](https://github.com/XiongTor/Rosa_family/blob/main/Analysis/BAMM/plot_bamm_env.R) | BAMM相关绘图 <br> BAMM related plotting | Tao Xiong | 2025-05-13 |
-
----
-
-## 工具 (Tools)
-
-用于各种数据处理和分析任务的实用脚本。
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [wcvp.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/wcvp.R) ⚙️ | 通过WCVP进行名称标准化 <br> Name standardization by WCVP | Tao Xiong | 2025.03.28 |
-| [mono.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/mono.R) ⚙️ | 检查每个分支的单系性 <br> Check monophyly of each clade | Tao Xiong | 2025.04.16 |
-| [monophy.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/monophy.R) ⚙️ | 使用R包MonoPhy检查单系性 <br> Check monophyly using MonoPhy package | Tao Xiong | 2025.04.18 |
-| [make_hybpiper_reference.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/make_hybpiper_reference.sh) | 获取353基因数据的参考序列 <br> Get reference sequence for 353-gene data | Tao Xiong | 2025-04.03 |
-| [genetree_reroot.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/genetree_reroot.sh) | 使用外类群或MAD方法重定根基因树 <br> Reroot gene trees using outgroup or MAD | Tao Xiong | 2025-08-27 |
-| [count_OG_per_species.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/count_OG_per_species.sh) | 计算每个物种的直系同源组（OGs）数量 <br> Count orthologous groups per species | Tao Xiong | 2025-07-02 |
-| [clean_supp.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/clean_supp.R) | 清理支持值 <br> Clean support values | Tao Xiong | 2025-07-03 |
-| [count_RF_path_dist.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/count_RF_path_dist.R) | 计算Robinson-Foulds和路径距离 <br> Count Robinson-Foulds and path distances | - | - |
-| [count_RF_path_two_trees.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/count_RF_path_two_trees.R) | 计算两棵树之间的RF和路径距离 <br> Count RF and path distance between two trees | Tao Xiong | 2025-10-08 |
-| [msa2vcf_biallelic.py](https://github.com/XiongTor/Rosa_family/blob/main/Tools/msa2vcf_biallelic.py) | 将MSA FASTA转换为双等位基因VCF格式 <br> Convert MSA FASTA to biallelic VCF | - | - |
-| [gcf_scf.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/gcf_scf.sh) | 计算基因和位点一致性因子 <br> Count gene and site concordance factors | Tao Xiong | 2025-10-23 |
-| [remove_lt_100bp_length_moregap.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/remove_lt_100bp_length_moregap.sh) | 移除短于100bp的序列 <br> Remove sequences shorter than 100bp | Tao Xiong | 2025-10-11 |
-| [make_treelength_gt_0.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/make_treelength_gt_0.R) ⚙️ | 使树的分支长度大于0 <br> Make tree branch lengths greater than 0 | Tao Xiong | 2025.04.18 |
-| [split_windows.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/split_windows.sh) | 将序列分割为滑动窗口 <br> Split sequences into sliding windows | Tao Xiong | 2025-12-02 |
-| [pair_distance_aa_dna.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/pair_distance_aa_dna.R) | 序列距离分析 <br> Sequence distance analysis | Tao Xiong | 2025-12-21 |
-| [kaks.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/kaks.sh) | 使用pal2nal计算Ka/Ks比率 <br> Calculate Ka/Ks ratios using pal2nal | Tao Xiong | 2025-12-21 |
-| [count_length_gap.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/count_length_gap.sh) | 计算序列长度和gap统计信息 <br> Count sequence length and gap statistics | - | - |
-| [Get_support_value.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/Get_support_value.R) | 提取带有节点ID的ASTRAL支持值 <br> Extract ASTRAL support values with node IDs | Tao Xiong | 2025-08-27 |
-| [cophylo.R](https://github.com/XiongTor/Rosa_family/blob/main/Tools/cophylo.R) | Cophylo分析 - 比较物种树的拓扑结构 <br> Cophylo analysis - compare species tree topology | Tao Xiong | 2025-12-18 |
-| [GDR.py](https://github.com/XiongTor/Rosa_family/blob/main/Tools/GDR.py) | 使用Selenium从rosaceae.org JBrowse抓取数据 <br> Scrape data from rosaceae.org JBrowse | - | - |
-| [pdf_to_png.py](https://github.com/XiongTor/Rosa_family/blob/main/Tools/pdf_to_png.py) | 将PDF转换为具有目标宽度的PNG <br> Convert PDF to PNG with target width | Tao Xiong | 2026-03-04 |
-| [reboot_frps_smoothy.sh](https://github.com/XiongTor/Rosa_family/blob/main/Tools/reboot_frps_smoothy.sh) | 重启FRPC以进行远程服务器连接 <br> Reboot FRPC for remote server connection | - | - |
-
-> ⚙️ 标记表示该脚本可直接在命令行运行 (Executable scripts)
-
-**使用示例 (Usage Examples):**
-
-```bash
-# WCVP名称标准化
-Rscript wcvp.R name.csv
-
-# 检查单系性
-Rscript mono.R test.tree
-Rscript monophy.R test.tre
-
-# 使树长度大于0
-Rscript make_treelength_gt_0.R test.tre
-
-# 清理分布数据
-Rscript clean_distribution_data.R data/distribution_data.csv
+```text
+final_github_code/
+├── Analysis/
+│   ├── hybpiper_analy/                           # Module 1: HybPiper target assembly & quality control
+│   │   ├── trimmomatic.sh                        # Read trimming and adapter removal
+│   │   ├── hybpiper_step.sh                      # HybPiper assembly of Angiosperms353 loci
+│   │   ├── hybpiper_paftol_combine.sh            # Target gene concatenation
+│   │   ├── make_tree_step.sh                     # Gene tree generation pipeline
+│   │   └── plot_angiosperms353_recovery_boxplot.R# Boxplot of locus recovery across sequencing strategies
+│   │
+│   ├── bulidtree/                                # Module 2: Species tree & gene tree construction
+│   │   ├── make_tree.sh                          # IQ-TREE supermatrix & ASTRAL coalescent trees
+│   │   ├── make_condence_tree.sh                 # Consensus tree generation
+│   │   ├── Sortadate.sh                          # SortaDate clock-like locus filtering
+│   │   ├── treeshrink_pipeline.sh                # TreeShrink long-branch outlier filtering
+│   │   ├── genetree_reroot.sh                    # Gene tree outgroup rooting
+│   │   ├── tree_reroot_mono.sh                   # Monophyly enforcement & rerooting
+│   │   ├── hybsuite_use.sh                       # HybSuite pipeline runner
+│   │   └── plot_tree.R                           # Phylogenetic tree visualization with ggtree
+│   │
+│   ├── ILS/
+│   │   ├── cytonuclear_display/                  # Module 3: Visual conflict & topological distances
+│   │   │   ├── densitree.R                       # DensiTree visual superposition of gene trees
+│   │   │   ├── RF_path_MDS_new.R                 # Robinson-Foulds & Path distance MDS projection
+│   │   │   ├── QS_test.sh & QS_visual.R          # Quartet Sampling analysis & visualization
+│   │   │   └── phyparts.sh & phyparts_pies.sh    # PhyParts pie-chart bipartition conflicts
+│   │   │
+│   │   ├── concordance_node_label/               # Module 4: Multimetric node concordance
+│   │   │   ├── QS_test.sh                        # Quartet Concordance (QC, QD, QI) computation
+│   │   │   ├── ICA_IC_value.sh & ICA_plot.R      # RAxML Internode Certainty (IC, ICA)
+│   │   │   ├── concordance_factor_gcf_scf_qcf.sh # IQ-TREE gene/site concordance factors (gCF/sCF)
+│   │   │   └── phytop.sh                         # ASTRAL quartet concordance vectors (ψ1-ψ4)
+│   │   │
+│   │   ├── factor_alignment_tree/                # Module 5: 15 Sequence properties & matching
+│   │   │   ├── factor.sh & factor_parallel.sh    # High-throughput property extraction
+│   │   │   └── factor_plot/                      # 14 R scripts for PCA, correlation & matching:
+│   │   │       ├── 01_data_loading.R             # Data ingestion and normalization
+│   │   │       ├── 02_density_plots.R            # Property distribution comparison
+│   │   │       ├── 03_correlation_analysis.R     # Property correlation matrix
+│   │   │       ├── 04_pca_analysis.R             # PCA of nuclear vs plastid property space
+│   │   │       ├── 05_rf_distance_analysis.R     # Baseline RF distance evaluation
+│   │   │       ├── 06_chloroplast_matching.R     # Property-matched subsetting experiment
+│   │   │       └── 07_final_comparison.R         # Multi-metric topological divergence re-assessment
+│   │   │
+│   │   ├── simulate_theta/                       # Module 6: Coalescent simulation under MSC
+│   │   │   ├── get_theta.R                       # Branch-specific mutation parameter θ estimation
+│   │   │   ├── phybase_simulate.R                # Phybase neutral MSC gene tree simulation
+│   │   │   ├── count_four_aray.R & _lm.R         # MSCquartets topology frequency & linear regression
+│   │   │   └── get_number.py & plot.R            # Goodness-of-fit (R²) extraction and plotting
+│   │   │
+│   │   ├── MSCquartets/                          # Module 7: MSCquartets hypothesis testing
+│   │   │   ├── MSCquartets.R                     # Statistical hypothesis tests (T1 and T3 models)
+│   │   │   ├── get_sp_ILS_IH_contribution.R      # Species-pair ILS vs IH quantification
+│   │   │   └── get_gene_ILS_IH_contribution.R    # Locus-level ILS vs IH quantification
+│   │   │
+│   │   ├── QuIBL/                                # Module 8: QuIBL internal branch-length modeling
+│   │   │   ├── run_quibl.sh                      # QuIBL execution across triplets
+│   │   │   └── QuIBL_plot.R                      # ΔBIC filtering, introgression heatmaps
+│   │   │
+│   │   ├── D-statistics/                         # Module 9: Dsuite genome-wide introgression
+│   │   │   ├── msa2vcf_biallelic.py              # MSA to biallelic SNP VCF conversion
+│   │   │   ├── D-statistics.sh & run_Dsuite*.py  # D-statistic & f4-ratio with SNP thinning
+│   │   │   └── plot_box.R                        # Subfamily-level introgression distribution boxplots
+│   │   │
+│   │   ├── PhyloNetwork/                         # Module 10: SNaQ phylogenetic networks
+│   │   │   ├── runSNaQ_hn.jl                     # Julia PhyloNetworks SNaQ network inference (h=0..6)
+│   │   │   ├── PhyloNetworks.R                   # Network parsing and inheritance probability γ
+│   │   │   └── plot_final_loglikelihood.R        # Log-likelihood slope plot for best h selection
+│   │   │
+│   │   └── ILS_GTEE_IH/                          # Module 11: Unified relative importance partitioning
+│   │       ├── new_use_in_globel/                # Full pipeline & relaimpo LMG decomposition
+│   │       │   ├── relaimpo.R                    # Relative contribution of GTEE vs ILS vs IH
+│   │       │   ├── extract_node_values_theta.py  # Branch length & θ feature extraction
+│   │       │   └── triplet_mapper.py             # Empirical vs simulated triplet mapper
+│   │       └── new_use_in_GTEE_part/             # Seq-Gen simulation for estimation error
+│   │           └── generate_seqgen_commands.py   # Seq-Gen simulation command generator
+│   │
+│   └── Introgression_Functional_Enrichment/      # Module 12: Introgressed genes & GO/KEGG enrichment
+│       ├── 01_filter_high_confidence_trios_f4_quibl.R  # Dual-filtering (top 10% f4-ratio + QuIBL)
+│       ├── 02_eggnog_orgdb_clusterprofiler_enrichment.R # EggNOG annotation & OrgDb construction
+│       ├── 03_plot_GO_multi_threshold_barplots.R       # GO enrichment barplots (top 3% & top 5% |fdM|)
+│       ├── 04_analyze_GO_venn_six_groups_exact_intersections.R # Exact 6-trio Venn intersections
+│       └── 05_batch_assemble_trio_figures.py           # Multi-panel vector figure assembly
+│
+├── Tools/                                        # Core bioinformatics utility scripts
+│   ├── cophylo.R                                 # Face-to-face cophylogenetic tanglegrams
+│   ├── count_RF_path_dist.R                      # Robinson-Foulds and path distance matrices
+│   ├── count_OG_per_species.sh                   # OrthoFinder gene count summarizer
+│   ├── msa2vcf_biallelic.py                      # Multi-alignment to VCF converter
+│   ├── kaks.sh                                   # Ka/Ks calculator wrapper
+│   ├── mono.R & monophy.R                        # Monophyly testing
+│   └── remove_lt_100bp_length_moregap.sh         # Alignment length and gap filter
+│
+├── picture/                                      # Multi-panel figure assembly & format conversion
+│   ├── concat_images.py & combine_pdf.py         # Vector & raster figure stitching
+│   └── svg_to_pdf.py & pdf_to_png.py             # Format converters
+│
+├── imag/                                         # Project workflow diagrams
+│   └── readme_flowwork/                          # Methodology flowcharts
+│
+├── code_curation_report.md                       # Comprehensive code audit and curation report
+└── Gene_Introgression_Workflow.pdf               # Gene introgression workflow overview
 ```
 
 ---
 
-## 统计分析与绘图 (Statistical Analysis and Graphing)
+## 💻 Software & Environmental Prerequisites
 
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [Boxplot.R](https://github.com/XiongTor/Rosa_family/blob/main/Statistical_Analysis_and_Graphing/Boxplot.R) | 绘制箱线图（模板/示例）<br> Plot boxplot (template/example) | Tao Xiong | 2025-12-18 |
+### 1. R Environment (R $\ge$ 4.2.0)
+Install required packages via CRAN and Bioconductor:
+```R
+# CRAN packages
+install.packages(c("ape", "phangorn", "phytools", "ggplot2", "dplyr", "tidyr", 
+                   "scales", "pheatmap", "corrplot", "relaimpo", "pdfplumber"))
 
----
+# Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("ggtree", "treeio", "clusterProfiler", "AnnotationForge", 
+                       "enrichplot", "qvalue"))
 
-## 其他 (Others)
+# GitHub packages
+devtools::install_github("nstenz/quiblR")
+```
 
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) |
-|--------|-------------|--------|
-| [Zijia_build_tree.sh](https://github.com/XiongTor/Rosa_family/blob/main/Others/Zijia_build_tree.sh) | 从353基因中解析序列并按属组织 <br> Parse sequences from 353 genes and organize by genus | Miao Sun |
-| [poaceae_distributon_wcvp_plot.R](https://github.com/XiongTor/Rosa_family/blob/main/Others/poaceae_distributon_wcvp_plot.R) | 绘制黑麦草和其他黑麦草属物种的分布 <br> Plot distribution of Lolium perenne and other Lolium | Tao Xiong |
+### 2. Python Environment (Python $\ge$ 3.9)
+```bash
+pip install biopython pandas numpy matplotlib seaborn scipy reportlab PyPDF2 pdf2image
+```
 
----
+### 3. Julia Environment (for SNaQ phylogenetic networks)
+```julia
+using Pkg
+Pkg.add(["PhyloNetworks", "PhyloPlots", "CSV", "DataFrames"])
+```
 
-## 图片处理 (Picture Processing)
-
-| 脚本 (Script) | 描述 (Description) | 作者 (Author) | 日期 (Date) |
-|--------|-------------|--------|------|
-| [pdf_to_png.py](https://github.com/XiongTor/Rosa_family/blob/main/picture/pdf_to_png.py) | 将PDF转换为PNG图像 <br> Convert PDF to PNG images | Tao Xiong | 2026-02-02 |
-| [combine_png.py](https://github.com/XiongTor/Rosa_family/blob/main/picture/combine_png.py) | 将文件夹中的所有PDF合并为4x6网格图像 <br> Merge all PDFs into a 4x6 grid image | Tao Xiong | 2026-02-02 |
-
----
-
-## 统计摘要 (Summary Statistics)
-
-- **Shell脚本总数 (Total Shell Scripts)**: 37
-- **R脚本总数 (Total R Scripts)**: 45
-- **Python脚本总数 (Total Python Scripts)**: 13
-- **脚本总数 (Total Scripts)**: 95
-
----
-
-## 主要分析重点 (Key Analysis Focus Areas)
-
-1. **系统发育树构建 (Phylogenetic Tree Building)**: RAxML, ASTRAL, IQ-TREE, MPEST等多种方法
-2. **不一致性分析 (Incongruence Analysis)**: ILS、GTEE、IH测量
-3. **渐渗检测 (Introgression Detection)**: D统计量、Dsuite
-4. **四重奏分析 (Quartet Analysis)**: 四重奏采样、MSCquartets
-5. **分布分析 (Distribution Analysis)**: GBIF、WCVP、物种分布制图
-6. **序列处理 (Sequence Processing)**: 比对、修剪、质量控制
-7. **树比较 (Tree Comparisons)**: Robinson-Foulds距离、路径距离、拓扑比较
-8. **网络分析 (Network Analysis)**: PhyloNetworks、QuIBL
+### 4. Standalone Bioinformatics Tools
+Ensure the following command-line tools are installed and accessible in your `$PATH`:
+- **IQ-TREE 3** (`iqtree2` or `iqtree3`, v3.0+)
+- **ASTRAL-III / ASTRAL-MP / ASTRAL-pro**
+- **RAxML / RAxML-NG** (v8.2.12+)
+- **Dsuite** (v0.4+)
+- **QuIBL** (Python-based branch length modeling)
+- **HybPiper** (v2.0+)
+- **TreeShrink** (v1.3+)
+- **SortaDate** (Python)
+- **Quartet Sampling** (`quartet_sampling.py`, Pease et al. 2018)
+- **Seq-Gen** (v1.3.4+)
+- **EggNOG-mapper** (v2.1.13+)
 
 ---
 
-## 引用 (Citation)
+## 🚀 Step-by-Step Execution Guide
 
-如果您使用这些脚本，请引用分析中使用的相应工具和方法。
+### Step 1: Target Enrichment & Phylogenomic Assembly
+```bash
+# 1. Clean reads
+bash Analysis/hybpiper_analy/trimmomatic.sh
 
-If you use these scripts, please cite the appropriate tools and methods used in your analysis.
+# 2. Extract Angiosperms353 loci with HybPiper
+bash Analysis/hybpiper_analy/hybpiper_step.sh
+
+# 3. Detect long-branch outliers
+bash Analysis/bulidtree/treeshrink_pipeline.sh
+
+# 4. Construct ML supermatrix & ASTRAL coalescent species trees
+bash Analysis/bulidtree/make_tree.sh
+```
+
+### Step 2: Cytonuclear Discordance & Multimetric Node Quantification
+```bash
+# 1. Visualize gene tree discordance with DensiTree
+Rscript Analysis/ILS/cytonuclear_display/densitree.R
+
+# 2. Project gene tree topology space via MDS
+Rscript Analysis/ILS/cytonuclear_display/RF_path_MDS_new.R
+
+# 3. Compute Quartet Concordance (QC, QD, QI)
+bash Analysis/ILS/concordance_node_label/QS_test.sh
+
+# 4. Compute Internode Certainty (IC, ICA) with RAxML
+bash Analysis/ILS/concordance_node_label/ICA_IC_value.sh
+
+# 5. Compute Concordance Vectors (ψ1-ψ4)
+bash Analysis/ILS/concordance_node_label/phytop.sh
+```
+
+### Step 3: Sequence & Tree Properties and Property-Matching Experiment
+```bash
+# 1. Extract 15 properties across nuclear and plastid alignments
+bash Analysis/ILS/factor_alignment_tree/factor_parallel.sh
+
+# 2. Run PCA, correlation, and property-matching experiment
+Rscript Analysis/ILS/factor_alignment_tree/factor_plot/09-run_all.R
+```
+
+### Step 4: Dissecting Biological Drivers (ILS vs. IH)
+```bash
+# 1. Estimate θ and perform neutral MSC coalescent simulations
+Rscript Analysis/ILS/simulate_theta/get_theta.R
+Rscript Analysis/ILS/simulate_theta/phybase_simulate.R
+Rscript Analysis/ILS/simulate_theta/count_four_aray_lm.R
+
+# 2. MSCquartets T1 and T3 hypothesis tests
+Rscript Analysis/ILS/MSCquartets/MSCquartets.R
+
+# 3. QuIBL branch-length modeling
+bash Analysis/ILS/QuIBL/run_quibl.sh
+Rscript Analysis/ILS/QuIBL/QuIBL_plot.R
+
+# 4. Dsuite genome-wide ABBA-BABA D-statistics
+bash Analysis/ILS/D-statistics/D-statistics.sh
+python Analysis/ILS/D-statistics/run_Dsuite_xt.py
+
+# 5. SNaQ phylogenetic networks in Julia
+julia Analysis/ILS/PhyloNetwork/runSNaQ_hn.jl
+Rscript Analysis/ILS/PhyloNetwork/plot_final_loglikelihood.R
+```
+
+### Step 5: Unified Hierarchical Partitioning (GTEE vs. ILS vs. IH)
+```bash
+# 1. Simulate sequences with Seq-Gen to quantify estimation error
+python Analysis/ILS/ILS_GTEE_IH/new_use_in_GTEE_part/generate_seqgen_commands.py
+bash Analysis/ILS/ILS_GTEE_IH/new_use_in_GTEE_part/seqgen_commands.sh
+
+# 2. Run relaimpo LMG relative contribution partitioning
+Rscript Analysis/ILS/ILS_GTEE_IH/new_use_in_globel/relaimpo.R
+```
+
+### Step 6: Candidate Introgressed Gene Identification & Functional Enrichment
+```bash
+# 1. Filter candidate trios based on top decile f4-ratio and QuIBL
+Rscript Analysis/Introgression_Functional_Enrichment/01_filter_high_confidence_trios_f4_quibl.R
+
+# 2. Build custom OrgDb and run clusterProfiler GO/KEGG enrichment
+Rscript Analysis/Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R
+
+# 3. Plot multi-threshold barplots (top 3% & top 5% |fdM|)
+Rscript Analysis/Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R
+
+# 4. Calculate exact 6-trio Venn intersections
+Rscript Analysis/Introgression_Functional_Enrichment/04_analyze_GO_venn_six_groups_exact_intersections.R
+```
 
 ---
 
-## 联系方式 (Contact)
+## 📊 Manuscript Figure & Table to Code Mapping Matrix
 
-**Tao Xiong**
-GitHub: [@XiongTor](https://github.com/XiongTor)  
-Email: 1760755795@qq.com
+| Manuscript Item | Description | Generating / Analytical Scripts in this Repository |
+| :--- | :--- | :--- |
+| **Figure 1** | Cytonuclear tanglegram, DensiTree clouds, and basal topological conflicts | `Tools/cophylo.R`, `Analysis/ILS/cytonuclear_display/densitree.R` |
+| **Figure 2** | Genus-level species tree, node concordance (QC, QD, QI, IC, ICA, $\psi_1-\psi_4$) | `Analysis/ILS/concordance_node_label/QS_visual.R`, `ICA_plot.R`, `phytop.sh` |
+| **Figure 3** | 15 Sequence properties, correlation heatmap, PCA, and property-matching experiment | `Analysis/ILS/factor_alignment_tree/factor_plot/03_correlation_analysis.R`, `04_pca_analysis.R`, `06_chloroplast_matching.R` |
+| **Figure 4** | Coalescent simulation fit ($R^2$), QuIBL heatmaps, and Dsuite $D$-statistic distributions | `Analysis/ILS/simulate_theta/count_four_aray_lm.R`, `Analysis/ILS/QuIBL/QuIBL_plot.R`, `Analysis/ILS/D-statistics/plot_box.R` |
+| **Figs. S1–S6** | Data quality control, Angiosperms353 recovery, and paralog pruning | `Analysis/hybpiper_analy/plot_angiosperms353_recovery_boxplot.R`, `Tools/count_OG_per_species.sh` |
+| **Figs. S7–S11** | Robinson-Foulds and Path distance distributions across taxonomic levels | `Tools/count_RF_path_dist.R`, `Analysis/ILS/cytonuclear_display/RF_path_MDS_new.R` |
+| **Figs. S12–S16** | Concatenation (IQ-TREE) and coalescent (ASTRAL) nuclear/plastid species trees | `Analysis/bulidtree/make_tree.sh`, `plot_tree.R` |
+| **Figs. S17–S18** | Comprehensive node concordance metrics (QC, QD, QI, IC, ICA, gCF, sCF, $\psi$) | `Analysis/ILS/concordance_node_label/QS_test.sh`, `ICA_IC_value.sh`, `phytop.sh` |
+| **Figs. S21–S23** | Sequence property density curves, feature correlation matrices, and distance metrics | `Analysis/ILS/factor_alignment_tree/factor_plot/02_density_plots.R`, `07_final_comparison.R` |
+| **Figs. S24–S30** | Coalescent simulation $R^2$ regression plots across $\theta$ gradients (family, subfamilies) | `Analysis/ILS/simulate_theta/count_four_aray_lm.R`, `plot.R` |
+| **Figs. S31–S38** | MSCquartets hypothesis test ratios (T1 and T3 models) across $\alpha$ and $\beta$ thresholds | `Analysis/ILS/MSCquartets/MSCquartets.R`, `get_sp_ILS_IH_contribution.R` |
+| **Figs. S41–S45** | QuIBL introgression proportion heatmaps for AGS353 and OrthoFinder | `Analysis/ILS/QuIBL/QuIBL_plot.R` |
+| **Figs. S46–S48** | Dsuite ABBA-BABA $D$-statistic and $f_4$-ratio boxplots and spatial patterns | `Analysis/ILS/D-statistics/plot_box.R` |
+| **Figs. S49–S52** | SNaQ semi-directed phylogenetic networks ($h=0$ to $h=6$) and log-likelihood curves | `Analysis/ILS/PhyloNetwork/runSNaQ_hn.jl`, `plot_final_loglikelihood.R` |
+| **Figs. S53–S58** | Relative importance hierarchical variance decomposition (GTEE vs ILS vs IH) | `Analysis/ILS/ILS_GTEE_IH/new_use_in_globel/relaimpo.R` |
+| **Figs. S59–S64** | Multi-panel introgression scans ($|f_{dM}|$) and GO functional enrichment for 6 trios | `Analysis/Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R`, `05_batch_assemble_trio_figures.py` |
+| **Figs. S69–S70** | Nuclear gene tree DensiTree clouds and multidimensional scaling (MDS) | `Analysis/ILS/cytonuclear_display/densitree.R`, `RF_path_MDS_new.R` |
+| **Tables S7–S8** | QuIBL discordant quartet distribution and model fit statistics | `Analysis/ILS/QuIBL/QuIBL_plot.R` |
+| **Table S22** | Approximately Unbiased (AU) topology test statistics | `Analysis/bulidtree/make_tree.sh` |
+| **Table S25** | High-confidence introgressed gene candidate functional annotations and $P$-values | `Analysis/Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R` |
 
 ---
 
-*最后更新 (Last updated): 2026-03-05*
+## 📄 License & Attribution
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+If you find this repository or associated methodologies useful in your research, please cite our manuscript:
+```bibtex
+@article{xiong2026rosaceae,
+  title={Phylogenomic Dissection of Cytonuclear Discordance, Incomplete Lineage Sorting, and Reticulate Evolution in Rosaceae},
+  author={Xiong, Tao and et al.},
+  journal={In review},
+  year={2026}
+}
+```
+
+For questions, bug reports, or collaborative inquiries, please contact:  
+**Tao Xiong** (xiongtao@... / GitHub: [@XiongTor](https://github.com/XiongTor))

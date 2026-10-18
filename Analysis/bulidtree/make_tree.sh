@@ -26,6 +26,8 @@ iqtree -s Ela_sp_supermatrix.fasta --seed 12345 -o Barbeya_oleoides_100 -B 1000 
 #raxml
 raxmlHPC -f a -m GTRGAMMA -p 12345 -x 12345 -# 10 -s rosa_sp_supermatrix.fasta -n rosa.raxml -T 15
 
+# ASTRAL
+astral-pro3 -i all_genetrees_rt.tre -o LCN7_MO_sptree.tre>log_astral-pro3.txt
 #-f a 此参数用于选择 RAxML 运算的算法。可以设定的值非常之多。 a 表示执行快速 Bootstrap 分析并搜索最佳得分的 ML 树。
 
 #-x 12345 指定一个 int 数作为随机种子，以启用快速 Bootstrap 算法。
