@@ -7,13 +7,13 @@ from pdf2image import convert_from_path
 from PyPDF2 import PdfReader
 import os, glob
 
-TARGET_WIDTH = 3000
+TARGET_WIDTH = 11000
 poppler_path = r"D:\python\poppler-25.12.0\Library\bin"
 
 out_dir = "pngs"
 os.makedirs(out_dir, exist_ok=True) 
 
-for pdf in glob.glob("corrplot_diff_all_factor.pdf"):
+for pdf in glob.glob("Fig_0_cytonuclear_tanglegram_v4.pdf"):
     base = os.path.splitext(pdf)[0]
 
     reader = PdfReader(pdf)
