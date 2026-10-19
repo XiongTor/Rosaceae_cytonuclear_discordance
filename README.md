@@ -1,4 +1,4 @@
-# Phylogenomic Dissection of Cytonuclear Discordance and Reticulate Evolution in Rosaceae
+# Decomposing Phylogenetic  Discordance in Rosaceae: The Roles of Incomplete Lineage Sorting, Introgression, and Gene-Tree Error
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Pipeline: Phylogenomics](https://img.shields.io/badge/Pipeline-Phylogenomics-blue.svg)]()
@@ -181,7 +181,7 @@ Pkg.add(["PhyloNetworks", "PhyloPlots", "CSV", "DataFrames"])
 | :--- | :---: | :--- |
 | [`01_filter_high_confidence_trios_f4_quibl.R`](Introgression_Functional_Enrichment/01_filter_high_confidence_trios_f4_quibl.R) | R | Dual filtering (top decile $f_4$-ratio & QuIBL mixprop2) |
 | [`02_eggnog_orgdb_clusterprofiler_enrichment.R`](Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R) | R | EggNOG parsing, custom OrgDb, and clusterProfiler |
-| [`03_plot_GO_multi_threshold_barplots.R`](Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R) | R | Multi-threshold (top 3% & top 5% \|$f_{dM}$\|) GO barplots |
+| [`03_plot_GO_multi_threshold_barplots.R`](Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R) | R | Multi-threshold (top 3% & top 5%) GO barplots |
 | [`get_and_plot_top10_IH_gene.R`](Introgression_Functional_Enrichment/get_and_plot_top10_IH_gene.R) | R | Boxplots and barplots of locus-level ILS/IH scores for top candidate introgressed genes |
 
 ## Citation and Contact
@@ -189,12 +189,7 @@ Pkg.add(["PhyloNetworks", "PhyloPlots", "CSV", "DataFrames"])
 If you find this codebase, analytical workflows, or custom scripts useful in your research, please cite our paper:
 
 ```bibtex
-@article{xiong2026rosaceae,
-  title={Phylogenomic Dissection of Cytonuclear Discordance and Reticulate Evolution in Rosaceae},
-  author={Xiong, Tao and et al.},
-  journal={In review},
-  year={2026}
-}
+ Xiong, T., Y.-X. Liu, C.-H. Huang, X. Shen, D. Soltis, and M. Sun. 202x. Decomposing phylogenetic discordance in Rosaceae: The roles of incomplete lineage sorting, introgression, and gene-tree error. xxx
 ```
 
 For questions regarding script execution, methodology, or data availability, please contact:
