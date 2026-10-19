@@ -53,25 +53,23 @@ using Pkg
 Pkg.add(["PhyloNetworks", "PhyloPlots", "CSV", "DataFrames"])
 ```
 
-### Main Bioinformatics Software
-Ensure the following tools are compiled and available in system `$PATH`:
-- **IQ-TREE 3** (v3.0.0 or later; Minh et al. 2020)
-- **ASTRAL-Pro3 / ASTRAL-III** (Zhang et al. 2020)
-- **RAxML / RAxML-NG** (Stamatakis 2014)
-- **Dsuite** (v0.4 or later; Malinsky et al. 2021)
-- **QuIBL** (Edelman et al. 2019)
-- **Quartet Sampling** (Pease et al. 2018)
-- **Seq-Gen** (v1.3.4; Rambaut and Grass 1997)
-- **PhyKit & AMAS** (Steenwyk et al. 2021; Borowiec 2016)
-- **EggNOG-mapper** (v2.1.13; Cantalapiedra et al. 2021)
+### Main Bioinformatics Software and Method
+- **IQ-TREE 3** 
+- **ASTRAL-Pro3** 
+- **RAxML / RAxML-NG**
+- **MSCquartets**
+- **Dsuite** 
+- **QuIBL** 
+- **Quartet Sampling**
+- **Seq-Gen**
+- **PhyKit & AMAS** 
+- **EggNOG-mapper** 
 
 ---
 
 ## Repository Structure
 
-The analytical codebase is modularly organized into 10 dedicated scientific analysis suites. Below is the structured catalog of pipelines, scripts, and documentation files, where each module's contents are organized in a dedicated table and all script names provide direct clickable links to the source files:
-
-### 1. `concordance_node_label/` — Multimetric Internode Concordance Factors
+### 1. `concordance_node_label/` — Multimetric internal nodes concordance factors
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -106,7 +104,7 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`Sequence-property_analyses/factor_plot/README.md`](Discordance_display/Sequence-property_analyses/factor_plot/README.md) | Docs | Submodule documentation |
 | [`Sequence-property_analyses/factor_plot/README_RF_ANALYSIS.md`](Discordance_display/Sequence-property_analyses/factor_plot/README_RF_ANALYSIS.md) | Docs | Documentation for topological distance comparisons |
 
-### 3. `Coalescent simulations/` — Coalescent Simulation Under the MSC Model
+### 3. `Coalescent simulations/`
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -116,7 +114,7 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`plot.R`](Coalescent%20simulations/plot.R) | R | Regression scatter plotting |
 | [`RAEDME.md`](Coalescent%20simulations/RAEDME.md) | Docs | Submodule documentation |
 
-### 4. `MSCquartets/` — MSCquartets Hypothesis Testing
+### 4. `MSCquartets/` 
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -126,13 +124,13 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`analy_df_num.R`](MSCquartets/analy_df_num.R) | R | Hypothesis test classification summarizer |
 | [`results_classify.sh`](MSCquartets/results_classify.sh) | Shell | Automation script for quartet partitioning |
 
-### 5. `QuIBL/` — QuIBL Branch-Length Mixture Modeling
+### 5. `QuIBL/` 
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
 | [`QuIBL_plot.R`](QuIBL/QuIBL_plot.R) | R | $\Delta\text{BIC}$ classification and introgression heatmaps |
 
-### 6. `D-statistics/` — Genome-Wide ABBA-BABA Introgression Tests
+### 6. `D-statistics/` 
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -145,7 +143,7 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`sets.txt`](D-statistics/sets.txt) | Text | Species-to-clade assignment definitions |
 | [`plot_order.txt`](D-statistics/plot_order.txt) | Text | Species tree topology ordering for Dsuite heatmaps |
 
-### 7. `PhyloNetwork/` — SNaQ Semi-Directed Phylogenetic Network Inference
+### 7. `PhyloNetwork/` 
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -177,7 +175,7 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`new_use_in_GTEE_part/clip_missing_taxa.sh`](ILS_GTEE_IH/new_use_in_GTEE_part/clip_missing_taxa.sh) | Shell | Alignment pruning for empirical taxon occupancy |
 | [`new_use_in_GTEE_part/transform_astral_q1_result.py`](ILS_GTEE_IH/new_use_in_GTEE_part/transform_astral_q1_result.py) | Python | Summary of simulated bipartition recovery |
 
-### 9. `Introgression_Functional_Enrichment/` — Introgressed Gene Detection & Functional Enrichment
+### 9. `Introgression_Functional_Enrichment/` 
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -186,15 +184,7 @@ The analytical codebase is modularly organized into 10 dedicated scientific anal
 | [`03_plot_GO_multi_threshold_barplots.R`](Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R) | R | Multi-threshold (top 3% & top 5% \|$f_{dM}$\|) GO barplots |
 | [`get_and_plot_top10_IH_gene.R`](Introgression_Functional_Enrichment/get_and_plot_top10_IH_gene.R) | R | Boxplots and barplots of locus-level ILS/IH scores for top candidate introgressed genes |
 
-### 10. `workflow/` — Analytical Pipeline Overview
-
-| File | Type | Description |
-| :--- | :---: | :--- |
-| [`Rosaceae_Cytonuclear_Workflow.jpg`](workflow/Rosaceae_Cytonuclear_Workflow.jpg) | Image | Full high-resolution analytical workflow diagram |
-
----
-
-## 4. Citation and Contact
+## Citation and Contact
 
 If you find this codebase, analytical workflows, or custom scripts useful in your research, please cite our paper:
 
@@ -208,5 +198,5 @@ If you find this codebase, analytical workflows, or custom scripts useful in you
 ```
 
 For questions regarding script execution, methodology, or data availability, please contact:
-- **Tao Xiong** (xiongtao@... / GitHub: [@XiongTor](https://github.com/XiongTor))
+- **Tao Xiong** (2022305110174@webmail.hzau.edu.cn)
 - **Miao Sun** (miaosun@mail.hzau.edu.cn)
