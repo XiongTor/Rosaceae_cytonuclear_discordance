@@ -69,7 +69,7 @@ Ensure the following tools are compiled and available in system `$PATH`:
 
 ## Repository Structure
 
-The analytical codebase is modularly organized into 12 dedicated scientific analysis suites. Below is the structured catalog of pipelines, scripts, and documentation files, where each module's contents are organized in a dedicated table and all script names provide direct clickable links to the source files:
+The analytical codebase is modularly organized into 10 dedicated scientific analysis suites. Below is the structured catalog of pipelines, scripts, and documentation files, where each module's contents are organized in a dedicated table and all script names provide direct clickable links to the source files:
 
 ### 1. `concordance_node_label/` — Multimetric Internode Concordance Factors
 
@@ -77,60 +77,46 @@ The analytical codebase is modularly organized into 12 dedicated scientific anal
 | :--- | :---: | :--- |
 | [`concordance_factor_gcf_scf_qcf.sh`](concordance_node_label/concordance_factor_gcf_scf_qcf.sh) | Shell | IQ-TREE 3 gene (gCF) and site (sCF) concordance factors computation |
 | [`gcf_scf.sh`](concordance_node_label/gcf_scf.sh) | Shell | Summary and parsing of gCF and sCF output tables |
-| [`phytop.sh`](concordance_node_label/phytop.sh) | Shell | ASTRAL quartet concordance vector calculation ($\psi_1-\psi_4$) |
 | [`ICA_IC_value.sh`](concordance_node_label/ICA_IC_value.sh) | Shell | RAxML Internode Certainty (IC and ICA) computation |
 | [`ICA_plot.R`](concordance_node_label/ICA_plot.R) | R | Plotting of Internode Certainty distributions |
 | [`QS_test.sh`](concordance_node_label/QS_test.sh) | Shell | Quartet Sampling calculation across species-tree nodes |
+| [`QS_visual.R`](concordance_node_label/QS_visual.R) | R | Quartet Sampling QC/QD/QI visualization across nodes |
 
-### 2. `cytonuclear_display/` — Visual Conflict and Topological Distance Projection
-
-| Script / File | Type | Description |
-| :--- | :---: | :--- |
-| [`densitree.R`](cytonuclear_display/densitree.R) | R | DensiTree visual cloud overlay of gene trees |
-| [`RF_path_MDS_new.R`](cytonuclear_display/RF_path_MDS_new.R) | R | Robinson-Foulds and Path distance MDS 2D projection (updated) |
-| [`RF_path_MDS.R`](cytonuclear_display/RF_path_MDS.R) | R | Robinson-Foulds and Path distance MDS 2D projection |
-| [`QS_visual.R`](cytonuclear_display/QS_visual.R) | R | Quartet Sampling QC/QD/QI visualization |
-| [`QS_test.sh`](cytonuclear_display/QS_test.sh) | Shell | Quartet Sampling calculation across species-tree nodes |
-| [`phyparts.sh`](cytonuclear_display/phyparts.sh) | Shell | PhyParts bipartition conflict analysis |
-| [`phyparts_pies.sh`](cytonuclear_display/phyparts_pies.sh) | Shell | PhyParts bipartition conflict pie-chart calculation |
-
-### 3. `factor_alignment_tree/` — Sequence & Tree Properties and Matching Experiments
+### 2. `Discordance_display/` — Visual Conflict, Topological Distance & Sequence-Property Analyses
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
-| [`factor.sh`](factor_alignment_tree/factor.sh) | Shell | High-throughput property extraction via AMAS & PhyKit |
-| [`factor_parallel.sh`](factor_alignment_tree/factor_parallel.sh) | Shell | Parallel property extraction runner |
-| [`make_tree_factor.sh`](factor_alignment_tree/make_tree_factor.sh) | Shell | Supermatrix building and ML tree inference for matched sets |
-| [`random_nuclear.sh`](factor_alignment_tree/random_nuclear.sh) | Shell | Random nuclear gene sampling as background controls |
-| [`factor_plot/00-utils_functions.R`](factor_alignment_tree/factor_plot/00-utils_functions.R) | R | Shared utility functions and theme definitions |
-| [`factor_plot/01_data_loading.R`](factor_alignment_tree/factor_plot/01_data_loading.R) | R | Dataset ingestion and normalization |
-| [`factor_plot/02_density_plots.R`](factor_alignment_tree/factor_plot/02_density_plots.R) | R | Density distribution comparisons between nuclear & plastid |
-| [`factor_plot/03_correlation_analysis.R`](factor_alignment_tree/factor_plot/03_correlation_analysis.R) | R | 15-property pairwise correlation matrices |
-| [`factor_plot/04_pca_analysis.R`](factor_alignment_tree/factor_plot/04_pca_analysis.R) | R | Principal Component Analysis (PCA) |
-| [`factor_plot/05_rf_distance_analysis.R`](factor_alignment_tree/factor_plot/05_rf_distance_analysis.R) | R | Baseline topological distance evaluation |
-| [`factor_plot/06_chloroplast_matching.R`](factor_alignment_tree/factor_plot/06_chloroplast_matching.R) | R | Property-matched subsetting experiment |
-| [`factor_plot/07_final_comparison.R`](factor_alignment_tree/factor_plot/07_final_comparison.R) | R | Topological divergence reassessment |
-| [`factor_plot/08_density_based_rf_analysis.R`](factor_alignment_tree/factor_plot/08_density_based_rf_analysis.R) | R | Density-stratified RF distance analysis |
-| [`factor_plot/09-run_all.R`](factor_alignment_tree/factor_plot/09-run_all.R) | R | Master runner for property analysis |
-| [`factor_plot/10_chloroplast_similarity_analysis.R`](factor_alignment_tree/factor_plot/10_chloroplast_similarity_analysis.R) | R | Multidimensional distance quantification |
-| [`factor_plot/factor_plot.R`](factor_alignment_tree/factor_plot/factor_plot.R) | R | Monolithic plotting script |
-| [`factor_plot/README.md`](factor_alignment_tree/factor_plot/README.md) | Docs | Submodule documentation |
-| [`factor_plot/README_RF_ANALYSIS.md`](factor_alignment_tree/factor_plot/README_RF_ANALYSIS.md) | Docs | Documentation for topological distance comparisons |
+| [`densitree.R`](Discordance_display/densitree.R) | R | DensiTree visual cloud overlay of gene trees |
+| [`RF_path_MDS_new.R`](Discordance_display/RF_path_MDS_new.R) | R | Robinson-Foulds and Path distance MDS 2D projection |
+| [`Sequence-property_analyses/factor.sh`](Discordance_display/Sequence-property_analyses/factor.sh) | Shell | High-throughput property extraction via AMAS & PhyKit |
+| [`Sequence-property_analyses/make_tree_factor.sh`](Discordance_display/Sequence-property_analyses/make_tree_factor.sh) | Shell | Supermatrix building and ML tree inference for matched sets |
+| [`Sequence-property_analyses/random_nuclear.sh`](Discordance_display/Sequence-property_analyses/random_nuclear.sh) | Shell | Random nuclear gene sampling as background controls |
+| [`Sequence-property_analyses/factor_plot/00-utils_functions.R`](Discordance_display/Sequence-property_analyses/factor_plot/00-utils_functions.R) | R | Shared utility functions and theme definitions |
+| [`Sequence-property_analyses/factor_plot/01_data_loading.R`](Discordance_display/Sequence-property_analyses/factor_plot/01_data_loading.R) | R | Dataset ingestion and normalization |
+| [`Sequence-property_analyses/factor_plot/02_density_plots.R`](Discordance_display/Sequence-property_analyses/factor_plot/02_density_plots.R) | R | Density distribution comparisons between nuclear & plastid |
+| [`Sequence-property_analyses/factor_plot/03_correlation_analysis.R`](Discordance_display/Sequence-property_analyses/factor_plot/03_correlation_analysis.R) | R | 15-property pairwise correlation matrices |
+| [`Sequence-property_analyses/factor_plot/04_pca_analysis.R`](Discordance_display/Sequence-property_analyses/factor_plot/04_pca_analysis.R) | R | Principal Component Analysis (PCA) |
+| [`Sequence-property_analyses/factor_plot/05_rf_distance_analysis.R`](Discordance_display/Sequence-property_analyses/factor_plot/05_rf_distance_analysis.R) | R | Baseline topological distance evaluation |
+| [`Sequence-property_analyses/factor_plot/06_chloroplast_matching.R`](Discordance_display/Sequence-property_analyses/factor_plot/06_chloroplast_matching.R) | R | Property-matched subsetting experiment |
+| [`Sequence-property_analyses/factor_plot/07_final_comparison.R`](Discordance_display/Sequence-property_analyses/factor_plot/07_final_comparison.R) | R | Topological divergence reassessment |
+| [`Sequence-property_analyses/factor_plot/08_density_based_rf_analysis.R`](Discordance_display/Sequence-property_analyses/factor_plot/08_density_based_rf_analysis.R) | R | Density-stratified RF distance analysis |
+| [`Sequence-property_analyses/factor_plot/09-run_all.R`](Discordance_display/Sequence-property_analyses/factor_plot/09-run_all.R) | R | Master runner for property analysis |
+| [`Sequence-property_analyses/factor_plot/10_chloroplast_similarity_analysis.R`](Discordance_display/Sequence-property_analyses/factor_plot/10_chloroplast_similarity_analysis.R) | R | Multidimensional distance quantification |
+| [`Sequence-property_analyses/factor_plot/factor_plot.R`](Discordance_display/Sequence-property_analyses/factor_plot/factor_plot.R) | R | Monolithic plotting script |
+| [`Sequence-property_analyses/factor_plot/README.md`](Discordance_display/Sequence-property_analyses/factor_plot/README.md) | Docs | Submodule documentation |
+| [`Sequence-property_analyses/factor_plot/README_RF_ANALYSIS.md`](Discordance_display/Sequence-property_analyses/factor_plot/README_RF_ANALYSIS.md) | Docs | Documentation for topological distance comparisons |
 
-### 4. `simulate_theta/` — Coalescent Simulation Under the MSC Model
+### 3. `Coalescent simulations/` — Coalescent Simulation Under the MSC Model
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
-| [`get_theta.R`](simulate_theta/get_theta.R) | R | Internal node mutation parameter $\theta$ calculation |
-| [`phybase_simulate.R`](simulate_theta/phybase_simulate.R) | R | Phybase coalescent simulation across $\theta$ gradient (3,000 trees) |
-| [`count_four_aray.R`](simulate_theta/count_four_aray.R) | R | Quartet frequency extraction |
-| [`count_four_aray_lm.R`](simulate_theta/count_four_aray_lm.R) | R | Linear regression ($R^2$) between quartet frequencies and coalescent expectation |
-| [`get_number.py`](simulate_theta/get_number.py) | Python | Regression $R^2$ summary and extraction |
-| [`plot.R`](simulate_theta/plot.R) | R | Regression scatter plotting |
-| [`rename.sh`](simulate_theta/rename.sh) | Shell | File management for simulation replicates |
-| [`RAEDME.md`](simulate_theta/RAEDME.md) | Docs | Submodule documentation |
+| [`count_four_aray_lm.R`](Coalescent%20simulations/count_four_aray_lm.R) | R | Linear regression ($R^2$) between quartet frequencies and coalescent expectation |
+| [`get_theta.R`](Coalescent%20simulations/get_theta.R) | R | Internal node mutation parameter $\theta$ calculation |
+| [`phybase_simulate.R`](Coalescent%20simulations/phybase_simulate.R) | R | Phybase coalescent simulation across $\theta$ gradient (3,000 trees) |
+| [`plot.R`](Coalescent%20simulations/plot.R) | R | Regression scatter plotting |
+| [`RAEDME.md`](Coalescent%20simulations/RAEDME.md) | Docs | Submodule documentation |
 
-### 5. `MSCquartets/` — MSCquartets Hypothesis Testing
+### 4. `MSCquartets/` — MSCquartets Hypothesis Testing
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -140,36 +126,26 @@ The analytical codebase is modularly organized into 12 dedicated scientific anal
 | [`analy_df_num.R`](MSCquartets/analy_df_num.R) | R | Hypothesis test classification summarizer |
 | [`results_classify.sh`](MSCquartets/results_classify.sh) | Shell | Automation script for quartet partitioning |
 
-### 6. `Get_ILS_IH_gene/` — Score Visualization for ILS and IH Loci
+### 5. `QuIBL/` — QuIBL Branch-Length Mixture Modeling
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
-| [`get_and_plot_IH_gene.R`](Get_ILS_IH_gene/get_and_plot_IH_gene.R) | R | Boxplots and barplots of locus-level ILS/IH scores |
-
-### 7. `QuIBL/` — QuIBL Branch-Length Mixture Modeling
-
-| Script / File | Type | Description |
-| :--- | :---: | :--- |
-| [`run_quibl.sh`](QuIBL/run_quibl.sh) | Shell | Triplet branch-length distribution estimation |
 | [`QuIBL_plot.R`](QuIBL/QuIBL_plot.R) | R | $\Delta\text{BIC}$ classification and introgression heatmaps |
 
-### 8. `D-statistics/` — Genome-Wide ABBA-BABA Introgression Tests
+### 6. `D-statistics/` — Genome-Wide ABBA-BABA Introgression Tests
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
 | [`msa2vcf_biallelic.py`](D-statistics/msa2vcf_biallelic.py) | Python | Extraction of biallelic SNPs from MSA to VCF format |
 | [`D-statistics.sh`](D-statistics/D-statistics.sh) | Shell | Dsuite Dtrios, Fbranch, and visualization runner |
-| [`run_Dsuite.py`](D-statistics/run_Dsuite.py) | Python | Automated batch execution of Dsuite |
 | [`run_Dsuite_xt.py`](D-statistics/run_Dsuite_xt.py) | Python | Automated batch execution of Dsuite (extended workflow) |
-| [`run_Dsuite_no_snp_thinning.py`](D-statistics/run_Dsuite_no_snp_thinning.py) | Python | Dsuite execution without SNP thinning |
-| [`run_Dsutie_xt_snp_thinning.py`](D-statistics/run_Dsutie_xt_snp_thinning.py) | Python | Dsuite execution with physical distance SNP thinning |
 | [`make_runbash.sh`](D-statistics/make_runbash.sh) | Shell | Shell script generator for batch runs |
 | [`run.sh`](D-statistics/run.sh) | Shell | Parallel execution runner |
 | [`plot_box.R`](D-statistics/plot_box.R) | R | Subfamily and inter-subfamily D-statistic boxplots |
 | [`sets.txt`](D-statistics/sets.txt) | Text | Species-to-clade assignment definitions |
 | [`plot_order.txt`](D-statistics/plot_order.txt) | Text | Species tree topology ordering for Dsuite heatmaps |
 
-### 9. `PhyloNetwork/` — SNaQ Semi-Directed Phylogenetic Network Inference
+### 7. `PhyloNetwork/` — SNaQ Semi-Directed Phylogenetic Network Inference
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -178,7 +154,7 @@ The analytical codebase is modularly organized into 12 dedicated scientific anal
 | [`plot_final_loglikelihood.R`](PhyloNetwork/plot_final_loglikelihood.R) | R | Log-pseudolikelihood slope plot for optimal $h$ selection |
 | [`plot_result_julia.R`](PhyloNetwork/plot_result_julia.R) | R | Network visualization via PhyloPlots |
 
-### 10. `ILS_GTEE_IH/` — Integrated Variance Decomposition (GTEE vs ILS vs IH)
+### 8. `ILS_GTEE_IH/` — Integrated Variance Decomposition (GTEE vs ILS vs IH)
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
@@ -201,18 +177,16 @@ The analytical codebase is modularly organized into 12 dedicated scientific anal
 | [`new_use_in_GTEE_part/clip_missing_taxa.sh`](ILS_GTEE_IH/new_use_in_GTEE_part/clip_missing_taxa.sh) | Shell | Alignment pruning for empirical taxon occupancy |
 | [`new_use_in_GTEE_part/transform_astral_q1_result.py`](ILS_GTEE_IH/new_use_in_GTEE_part/transform_astral_q1_result.py) | Python | Summary of simulated bipartition recovery |
 
-### 11. `Introgression_Functional_Enrichment/` — Introgressed Gene Detection & GO Enrichment
+### 9. `Introgression_Functional_Enrichment/` — Introgressed Gene Detection & Functional Enrichment
 
 | Script / File | Type | Description |
 | :--- | :---: | :--- |
 | [`01_filter_high_confidence_trios_f4_quibl.R`](Introgression_Functional_Enrichment/01_filter_high_confidence_trios_f4_quibl.R) | R | Dual filtering (top decile $f_4$-ratio & QuIBL mixprop2) |
 | [`02_eggnog_orgdb_clusterprofiler_enrichment.R`](Introgression_Functional_Enrichment/02_eggnog_orgdb_clusterprofiler_enrichment.R) | R | EggNOG parsing, custom OrgDb, and clusterProfiler |
 | [`03_plot_GO_multi_threshold_barplots.R`](Introgression_Functional_Enrichment/03_plot_GO_multi_threshold_barplots.R) | R | Multi-threshold (top 3% & top 5% \|$f_{dM}$\|) GO barplots |
-| [`04_analyze_GO_venn_six_groups_exact_intersections.R`](Introgression_Functional_Enrichment/04_analyze_GO_venn_six_groups_exact_intersections.R) | R | Exact 6-trio Venn intersections |
-| [`05_batch_assemble_trio_figures.py`](Introgression_Functional_Enrichment/05_batch_assemble_trio_figures.py) | Python | Publication figure assembly (scatter, tree, GO) |
-| [`README_Introgression_GO.md`](Introgression_Functional_Enrichment/README_Introgression_GO.md) | Docs | Workflow documentation |
+| [`get_and_plot_top10_IH_gene.R`](Introgression_Functional_Enrichment/get_and_plot_top10_IH_gene.R) | R | Boxplots and barplots of locus-level ILS/IH scores for top candidate introgressed genes |
 
-### 12. `workflow/` — Analytical Pipeline Overview
+### 10. `workflow/` — Analytical Pipeline Overview
 
 | File | Type | Description |
 | :--- | :---: | :--- |
