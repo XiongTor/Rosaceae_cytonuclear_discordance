@@ -9,6 +9,9 @@
 This repository contains the complete analytical pipelines, custom scripts, and figure-generation workflows for the study:  
 **"Decomposing Phylogenetic  Discordance in Rosaceae: The Roles of Incomplete Lineage Sorting, Introgression, and Gene-Tree Error"**  
 
+<p align="center">
+  <img src="workflow/Rosaceae_Cytonuclear_Workflow.jpg" alt="Rosaceae Cytonuclear Analytical Workflow" width="100%">
+</p>
 
 ---
 
@@ -139,6 +142,9 @@ Rosaceae_cytonuclear_discordance/
 │   ├── 04_analyze_GO_venn_six_groups_exact_intersections.R # Exact 6-trio Venn intersections
 │   ├── 05_batch_assemble_trio_figures.py                 # Publication figure assembly (scatter, tree, GO)
 │   └── README_Introgression_GO.md                        # Workflow documentation
+│
+├── workflow/                                             # Analytical pipeline overview and flowchart
+│   └── Rosaceae_Cytonuclear_Workflow.jpg                 # Full analytical workflow diagram
 │
 └── code_curation_report.md                               # Comprehensive code audit and curation report
 ```
